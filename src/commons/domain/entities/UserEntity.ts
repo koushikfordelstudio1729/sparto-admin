@@ -1,0 +1,18 @@
+import type { AddressEntity } from "./AddressEntity";
+import type { EmailEntity } from "./EmailEntity";
+import type { PhoneEntity } from "./PhoneEntity";
+
+export interface UserEntity {
+  id: string;
+  name: string;
+  phones: PhoneEntity[];
+  emails: EmailEntity[];
+  addresses: AddressEntity[];
+  profilePictureUrl?: string;
+  roleId: string;
+  status: "active" | "inactive";
+  termsAccepted: boolean;
+  createdAt: number;
+  updatedAt: number;
+  hasPassword: boolean;
+}

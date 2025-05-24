@@ -11,17 +11,8 @@ const UserViewModal: React.FC<UserViewModalProps> = ({
 }) => {
   if (!isOpen || !user) return null;
 
-  const handleBackdropClick = (e: React.MouseEvent) => {
-    if (e.target === e.currentTarget) {
-      onClose();
-    }
-  };
-
   return (
-    <div
-      className="fixed inset-0 bg-black bg-opacity-40 backdrop-blur-sm flex items-center justify-center z-50"
-      onClick={handleBackdropClick}
-    >
+    <div className="fixed inset-0 bg-black bg-opacity-40 backdrop-blur-sm flex items-center justify-center z-50">
       <div className="bg-white rounded-lg p-6 max-w-lg w-full mx-4">
         <h3 className="text-2xl font-semibold mb-4">User Details</h3>
         <div className="space-y-3">

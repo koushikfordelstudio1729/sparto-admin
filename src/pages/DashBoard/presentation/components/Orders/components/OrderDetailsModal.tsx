@@ -12,10 +12,7 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
   const paymentStatus = selectedOrder.paymentStatus ?? "pending";
 
   return (
-    <div
-      className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 backdrop-blur-sm"
-      onClick={onClose}
-    >
+    <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 backdrop-blur-sm">
       <div className="bg-white rounded-lg max-w-4xl w-full mx-4 max-h-screen overflow-y-auto">
         <div className="p-6 border-b">
           <div className="flex justify-between items-center">

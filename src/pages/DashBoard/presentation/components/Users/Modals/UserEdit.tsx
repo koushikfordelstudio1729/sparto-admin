@@ -18,12 +18,6 @@ const UserEditModal: React.FC<UserEditModalProps> = ({
 
   if (!isOpen || !formData) return null;
 
-  const handleBackdropClick = (e: React.MouseEvent) => {
-    if (e.target === e.currentTarget) {
-      onClose();
-    }
-  };
-
   const handleInputChange = (field: keyof User, value: string | number) => {
     setFormData((prev) => (prev ? { ...prev, [field]: value } : null));
   };
@@ -37,10 +31,7 @@ const UserEditModal: React.FC<UserEditModalProps> = ({
   };
 
   return (
-    <div
-      className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 backdrop-blur-sm"
-      onClick={handleBackdropClick}
-    >
+    <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 backdrop-blur-sm">
       <div className="bg-white rounded-lg p-6 max-w-lg w-full mx-4 max-h-[90vh] overflow-y-auto">
         <h3 className="text-2xl font-semibold mb-4">Edit User</h3>
         <form onSubmit={handleSubmit} className="space-y-4">

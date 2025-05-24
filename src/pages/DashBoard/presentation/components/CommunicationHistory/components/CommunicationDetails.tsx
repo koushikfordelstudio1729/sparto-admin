@@ -25,10 +25,7 @@ const CommunicationDetailsModal: React.FC<Props> = ({
   if (!communication) return null;
 
   return (
-    <div
-      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 backdrop-blur-sm"
-      onClick={onClose}
-    >
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 backdrop-blur-sm">
       <div
         className="bg-white rounded-lg max-w-3xl w-full mx-4 max-h-screen overflow-y-auto"
         onClick={(e) => e.stopPropagation()}

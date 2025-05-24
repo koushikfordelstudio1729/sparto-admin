@@ -393,7 +393,10 @@ const UsersComponent: React.FC = () => {
 
       {/* View Modal */}
       {showViewModal && (
-        <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center z-50">
+        <div
+          className="fixed inset-0 bg-black bg-opacity-40 backdrop-blur-sm flex items-center justify-center z-50"
+          onClick={() => setShowViewModal(false)}
+        >
           <div className="bg-white rounded-lg p-6 max-w-lg w-full">
             <h3 className="text-2xl font-semibold mb-4">User Details</h3>
             {editingUser && (
@@ -438,7 +441,10 @@ const UsersComponent: React.FC = () => {
 
       {/* Edit Modal */}
       {showEditModal && (
-        <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center z-50">
+        <div
+          className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 backdrop-blur-sm"
+          onClick={() => setShowEditModal(false)}
+        >
           <div className="bg-white rounded-lg p-6 max-w-lg w-full">
             <h3 className="text-2xl font-semibold mb-4">Edit User</h3>
             {editingUser && (
@@ -526,7 +532,10 @@ const UsersComponent: React.FC = () => {
 
       {/* Delete Modal */}
       {showDeleteModal && (
-        <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center z-50">
+        <div
+          className="fixed inset-0 bg-black bg-opacity-40 backdrop-blur-sm flex items-center justify-center z-50"
+          onClick={() => setShowDeleteModal(false)}
+        >
           <div className="bg-white rounded-lg p-6 max-w-lg w-full">
             <h3 className="text-2xl font-semibold mb-4">Delete User</h3>
             <div className="mb-4">

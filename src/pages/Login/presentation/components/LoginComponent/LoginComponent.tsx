@@ -8,6 +8,7 @@ import CustomButton from "@/commons/components/Button";
 import CustomInput from "@/commons/components/Input/CustomInput";
 import CustomCheckbox from "@/commons/components/checkbox/CustomCheckbox";
 import DashboardPreview from "../DashBoardPreview/DashBoardPreview";
+import { useAuth } from "@/commons/hooks/useAuth";
 
 const LoginComponent = () => {
   const viewModel = useLoginPageViewModel();
@@ -24,12 +25,13 @@ const LoginComponent = () => {
 
   const redirectPath = searchParams.get("redirect") || "/dashboard";
 
+  const { isAuthenticated } = useAuth();
+
   useEffect(() => {
-    const authToken = localStorage.getItem("authToken");
-    if (authToken) {
+    if (isAuthenticated) {
       navigate(redirectPath, { replace: true });
     }
-  }, [navigate, redirectPath]);
+  }, [isAuthenticated, navigate, redirectPath]);
 
   const handlePhoneChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {

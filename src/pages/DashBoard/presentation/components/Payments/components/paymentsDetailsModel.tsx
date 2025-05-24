@@ -1,0 +1,93 @@
+import React from "react";
+import type { Payment } from "../payments.types";
+
+interface PaymentDetailsModalProps {
+  payment: Payment;
+  onClose: () => void;
+}
+
+export const PaymentDetailsModal: React.FC<PaymentDetailsModalProps> = ({
+  payment,
+  onClose,
+}) => {
+  return (
+    <div
+      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 backdrop-blur-sm"
+      onClick={onClose}
+    >
+      <div
+        className="bg-white rounded-lg max-w-4xl w-full mx-4 max-h-screen overflow-y-auto"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="p-6 border-b flex justify-between items-center">
+          <h3 className="text-xl font-bold">Payment Details - {payment.id}</h3>
+          <button
+            onClick={onClose}
+            className="text-gray-500 hover:text-gray-700"
+          >
+            ✕
+          </button>
+        </div>
+
+        <div className="p-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <h4 className="font-semibold mb-3">Customer Information</h4>
+              <div className="space-y-2 text-sm">
+                <p>
+                  <strong>Name:</strong> {payment.userName}
+                </p>
+                <p>
+                  <strong>Email:</strong> koushik@example.com
+                </p>
+                <p>
+                  <strong>User ID:</strong> {payment.userId}
+                </p>
+              </div>
+            </div>
+            <div>
+              <h4 className="font-semibold mb-3">Payment Information</h4>
+              <div className="space-y-2 text-sm">
+                <p>
+                  <strong>Payment Date:</strong>{" "}
+                  {new Date(payment.date).toLocaleString()}
+                </p>
+                <p>
+                  <strong>Amount:</strong> ${payment.amount.toFixed(2)}{" "}
+                  {payment.currency}
+                </p>
+                <p>
+                  <strong>Transaction ID:</strong> {payment.transactionId}
+                </p>
+                <p>
+                  <strong>Gateway:</strong> {payment.gateway}
+                </p>
+                <p>
+                  <strong>Fees:</strong> ${payment.fees.toFixed(2)}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {payment.notes && (
+            <div className="mt-6">
+              <h4 className="font-semibold mb-3">Notes</h4>
+              <p className="text-sm text-gray-700 bg-gray-50 p-3 rounded">
+                {payment.notes}
+              </p>
+            </div>
+          )}
+
+          <div className="mt-6 flex justify-end">
+            <button
+              onClick={onClose}
+              className="bg-gray-300 text-gray-700 py-2 px-4 rounded-lg hover:bg-gray-400"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};

@@ -1,3 +1,4 @@
+import CustomButton from "@/commons/components/Button";
 import type { Payment } from "../payments.types";
 
 interface RefundModalProps {
@@ -73,18 +74,23 @@ export const RefundModal: React.FC<RefundModalProps> = ({
           </div>
 
           <div className="flex gap-3">
-            <button
+            <CustomButton
               onClick={onRefund}
-              className="flex-1 bg-red-600 text-white py-2 px-4 rounded-lg hover:bg-red-700"
+              variant="secondary"
+              size="md"
+              fullWidth
+              disabled={false}
             >
-              Process Refund
-            </button>
-            <button
+              <p className="text-white"> Process Refund</p>
+            </CustomButton>
+            <CustomButton
               onClick={onCancel}
-              className="flex-1 bg-gray-300 text-gray-700 py-2 px-4 rounded-lg hover:bg-gray-400"
+              variant="danger"
+              size="md"
+              disabled={false}
             >
-              Cancel
-            </button>
+              <p className="text-white">Cancel</p>
+            </CustomButton>
           </div>
         </div>
       </div>

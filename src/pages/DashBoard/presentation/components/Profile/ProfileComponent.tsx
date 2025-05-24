@@ -1,3 +1,4 @@
+import CustomButton from "@/commons/components/Button";
 import { Calendar, Camera, Mail, Shield, User } from "lucide-react";
 import React, { useState } from "react";
 
@@ -171,12 +172,14 @@ const ProfileComponent: React.FC = () => {
                   </div>
                 </div>
                 <div className="mt-6 flex justify-end">
-                  <button
+                  <CustomButton
                     onClick={handleSaveProfile}
-                    className="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 transition-colors font-medium"
+                    variant="secondary"
+                    size="md"
+                    disabled={false}
                   >
-                    Save Changes
-                  </button>
+                    <p className="text-white">Compose Message</p>
+                  </CustomButton>
                 </div>
               </div>
             </div>
@@ -275,24 +278,27 @@ const ProfileComponent: React.FC = () => {
                 </div>
               </div>
               <div className="mt-6 flex justify-between items-center">
-                <button
-                  type="button"
-                  className="text-sm text-gray-600 hover:text-gray-900 focus:outline-none transition-colors"
+                <CustomButton
                   onClick={() => {
                     setCurrentPassword("");
                     setNewPassword("");
                     setConfirmPassword("");
                   }}
+                  variant="danger"
+                  size="md"
+                  disabled={false}
                 >
-                  Cancel
-                </button>
-                <button
-                  type="button"
+                  <p className="text-white">Cancel</p>
+                </CustomButton>
+
+                <CustomButton
                   onClick={handlePasswordChange}
-                  className="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 transition-colors font-medium"
+                  variant="secondary"
+                  size="md"
+                  disabled={false}
                 >
-                  Update Password
-                </button>
+                  <p className="text-white">Update Password</p>
+                </CustomButton>
               </div>
             </div>
           </div>

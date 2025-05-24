@@ -3,6 +3,7 @@ import type { UserViewModalProps } from "./UserViewDetails.types";
 import StatusBadge from "@/commons/components/StatusBadge/StatusBadge";
 import { getUserRoleClass } from "@/commons/utils/getUserRoleStatusClass";
 import { getUserStatusClass } from "@/commons/utils/getUserStatusClass";
+import CustomButton from "@/commons/components/Button";
 
 const UserViewModal: React.FC<UserViewModalProps> = ({
   isOpen,
@@ -66,12 +67,14 @@ const UserViewModal: React.FC<UserViewModalProps> = ({
           </div>
         </div>
         <div className="flex justify-end mt-6">
-          <button
+          <CustomButton
             onClick={onClose}
-            className="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition-colors"
+            variant="danger"
+            size="md"
+            disabled={false}
           >
-            Close
-          </button>
+            <p className="text-white">Close</p>
+          </CustomButton>
         </div>
       </div>
     </div>

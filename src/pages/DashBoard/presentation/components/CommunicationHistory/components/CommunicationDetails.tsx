@@ -4,6 +4,7 @@ import { getCommunicationPriorityClass } from "@/commons/utils/getCommunicationP
 import { getCommunicationStatusClass } from "@/commons/utils/getCommunicationStatusClass";
 import { getTypeIcon } from "@/commons/utils/getTypeIcon";
 import type { Communication } from "../CommunicationHistory.types";
+import CustomButton from "@/commons/components/Button";
 
 interface Props {
   communication: Communication;
@@ -121,19 +122,25 @@ const CommunicationDetailsModal: React.FC<Props> = ({
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                 placeholder="Type your reply..."
               />
-              <div className="flex gap-3 mt-3">
-                <button
-                  onClick={onSendReply}
-                  className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-                >
-                  Send Reply
-                </button>
-                <button
+
+              <div className="flex gap-3">
+                <CustomButton
                   onClick={onClearReply}
-                  className="bg-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-400"
+                  variant="danger"
+                  size="md"
+                  disabled={false}
                 >
-                  Clear
-                </button>
+                  <p className="text-white"> Clear</p>
+                </CustomButton>
+                <CustomButton
+                  onClick={onSendReply}
+                  variant="secondary"
+                  size="md"
+                  fullWidth
+                  disabled={false}
+                >
+                  <p className="text-white">Send Reply</p>
+                </CustomButton>
               </div>
             </div>
           )}

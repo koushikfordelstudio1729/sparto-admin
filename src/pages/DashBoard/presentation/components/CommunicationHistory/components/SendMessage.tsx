@@ -1,5 +1,6 @@
 import React from "react";
 import type { SendReplyModalProps } from "./SendMessage.types";
+import CustomButton from "@/commons/components/Button";
 
 const SendReplyModal: React.FC<SendReplyModalProps> = ({
   communication,
@@ -40,18 +41,23 @@ const SendReplyModal: React.FC<SendReplyModalProps> = ({
         ></textarea>
 
         <div className="flex gap-3">
-          <button
-            onClick={onSendReply}
-            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-          >
-            Send Reply
-          </button>
-          <button
+          <CustomButton
             onClick={onClose}
-            className="bg-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-400"
+            variant="danger"
+            size="md"
+            disabled={false}
           >
-            Cancel
-          </button>
+            <p className="text-white">Cancel</p>
+          </CustomButton>
+          <CustomButton
+            onClick={onSendReply}
+            variant="secondary"
+            size="md"
+            fullWidth
+            disabled={false}
+          >
+            <p className="text-white">Send Reply</p>
+          </CustomButton>
         </div>
       </div>
     </div>

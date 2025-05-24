@@ -4,6 +4,7 @@ import { Download } from "lucide-react";
 import React from "react";
 import type { Payment } from "../payments.types";
 import type { PaymentsTabProps } from "./PaymentTable.types";
+import CustomButton from "@/commons/components/Button";
 
 export const PaymentsTab: React.FC<PaymentsTabProps> = ({
   payments,
@@ -106,10 +107,17 @@ export const PaymentsTab: React.FC<PaymentsTabProps> = ({
           className="mb-6"
         />
 
-        <button className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700">
-          <Download size={16} />
-          Export
-        </button>
+        <CustomButton
+          onClick={() => {}}
+          variant="success"
+          size="md"
+          disabled={false}
+        >
+          <p className="flex items-center gap-2">
+            <Download size={16} className="text-white" />
+            <p className="text-white ">Export</p>
+          </p>
+        </CustomButton>
       </div>
 
       {/* Payments Table */}

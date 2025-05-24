@@ -8,6 +8,7 @@ import CommunicationDetailsModal from "./components/CommunicationDetails";
 import MessagesTab from "./components/MessagesTable";
 import SendReplyModal from "./components/SendMessage";
 import { mockCommunications } from "./testData";
+import CustomButton from "@/commons/components/Button";
 
 const CommunicationHistory: React.FC = () => {
   const [communications, setCommunications] = useState<Communication[]>([]);
@@ -82,13 +83,19 @@ const CommunicationHistory: React.FC = () => {
         <h2 className="text-2xl font-bold text-gray-900">
           Communication History
         </h2>
-        <button
+
+        <CustomButton
           onClick={() => setShowComposeModal(true)}
-          className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
+          variant="secondary"
+          size="md"
+          disabled={false}
         >
-          <Send size={20} />
-          Compose Message
-        </button>
+          <div className="flex items-center gap-2">
+            {" "}
+            <Send size={20} className="mr-2" />
+            <p className="text-white">Compose Message</p>
+          </div>
+        </CustomButton>
       </div>
 
       {/* Tabs */}

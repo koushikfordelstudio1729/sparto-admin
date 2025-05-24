@@ -1,5 +1,6 @@
 import React from "react";
 import type { Payment } from "../payments.types";
+import CustomButton from "@/commons/components/Button";
 
 interface PaymentDetailsModalProps {
   payment: Payment;
@@ -79,12 +80,14 @@ export const PaymentDetailsModal: React.FC<PaymentDetailsModalProps> = ({
           )}
 
           <div className="mt-6 flex justify-end">
-            <button
+            <CustomButton
               onClick={onClose}
-              className="bg-gray-300 text-gray-700 py-2 px-4 rounded-lg hover:bg-gray-400"
+              variant="danger"
+              size="md"
+              disabled={false}
             >
-              Close
-            </button>
+              <p className="text-white">Close</p>
+            </CustomButton>
           </div>
         </div>
       </div>

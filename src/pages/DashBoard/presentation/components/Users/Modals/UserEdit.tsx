@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import type { UserEditModalProps } from "./UserEdit.types";
 import type { User } from "../User.types";
+import CustomButton from "@/commons/components/Button";
 
 const UserEditModal: React.FC<UserEditModalProps> = ({
   isOpen,
@@ -152,19 +153,22 @@ const UserEditModal: React.FC<UserEditModalProps> = ({
           </div>
 
           <div className="flex justify-end gap-4 pt-4">
-            <button
-              type="button"
+            <CustomButton
               onClick={onClose}
-              className="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition-colors"
+              variant="danger"
+              size="md"
+              disabled={false}
             >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              <p className="text-white">Cancel</p>
+            </CustomButton>
+            <CustomButton
+              variant="secondary"
+              size="md"
+              fullWidth
+              disabled={false}
             >
-              Save Changes
-            </button>
+              <p className="text-white">Save Changes</p>
+            </CustomButton>
           </div>
         </form>
       </div>

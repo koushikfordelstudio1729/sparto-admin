@@ -1,5 +1,6 @@
+import CustomButton from "@/commons/components/Button";
+import { AlertTriangle } from "lucide-react";
 import React from "react";
-import { Trash2, AlertTriangle } from "lucide-react";
 import type { UserDeleteModalProps } from "./User.types";
 
 const UserDeleteModal: React.FC<UserDeleteModalProps> = ({
@@ -35,31 +36,24 @@ const UserDeleteModal: React.FC<UserDeleteModalProps> = ({
           </p>
         </div>
 
-        <div className="flex justify-end gap-3">
-          <button
+        <div className="flex gap-3">
+          <CustomButton
             onClick={onClose}
-            disabled={isLoading}
-            className="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            variant="secondary"
+            size="md"
+            fullWidth
+            disabled={false}
           >
-            Cancel
-          </button>
-          <button
+            <p className="text-white"> Cancel</p>
+          </CustomButton>
+          <CustomButton
             onClick={handleConfirm}
-            disabled={isLoading}
-            className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+            variant="danger"
+            size="md"
+            disabled={false}
           >
-            {isLoading ? (
-              <>
-                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                Deleting...
-              </>
-            ) : (
-              <>
-                <Trash2 className="w-4 h-4" />
-                Delete User
-              </>
-            )}
-          </button>
+            <p className="text-white whitespace-nowrap"> Delete User</p>
+          </CustomButton>
         </div>
       </div>
     </div>

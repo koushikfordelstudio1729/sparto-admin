@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import OrderDetailsModal from "./components/OrderDetailsModal";
 import type { Order } from "./Orders.types";
-import OrderFilter from "./components/OrderFilters";
 import OrderTable from "./components/OrderTable";
+import FilterBar from "@/commons/components/FilterBar/FilterBar";
 
 const OrdersComponent: React.FC = () => {
   const [orders, setOrders] = useState<Order[]>([]);
@@ -108,15 +108,49 @@ const OrdersComponent: React.FC = () => {
       </div>
 
       {/* Filters */}
-      <OrderFilter
-        searchTerm={searchTerm}
-        setSearchTerm={setSearchTerm}
-        statusFilter={statusFilter}
-        setStatusFilter={setStatusFilter}
-        paymentFilter={paymentFilter}
-        setPaymentFilter={setPaymentFilter}
-        dateFilter={dateFilter}
-        setDateFilter={setDateFilter}
+      <FilterBar
+        search={{
+          value: searchTerm,
+          onChange: setSearchTerm,
+          placeholder: "Search orders...",
+        }}
+        filters={[
+          {
+            value: statusFilter,
+            onChange: setStatusFilter,
+            options: [
+              { value: "all", label: "All Status" },
+              { value: "pending", label: "Pending" },
+              { value: "confirmed", label: "Confirmed" },
+              { value: "processing", label: "Processing" },
+              { value: "shipped", label: "Shipped" },
+              { value: "delivered", label: "Delivered" },
+              { value: "cancelled", label: "Cancelled" },
+            ],
+          },
+          {
+            value: paymentFilter,
+            onChange: setPaymentFilter,
+            options: [
+              { value: "all", label: "All Payments" },
+              { value: "pending", label: "Payment Pending" },
+              { value: "paid", label: "Paid" },
+              { value: "failed", label: "Failed" },
+              { value: "refunded", label: "Refunded" },
+            ],
+          },
+          {
+            value: dateFilter,
+            onChange: setDateFilter,
+            options: [
+              { value: "all", label: "All Time" },
+              { value: "today", label: "Today" },
+              { value: "week", label: "This Week" },
+              { value: "month", label: "This Month" },
+            ],
+          },
+        ]}
+        className="w-full md:w-full"
       />
 
       {/* Order Table */}

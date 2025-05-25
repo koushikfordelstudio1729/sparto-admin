@@ -31,7 +31,7 @@ const Sidebar: React.FC<SidebarProps> = ({
           )}
         </button>
       </div>
-      <nav className="flex-1 p-4 overflow-y-auto">
+      <nav className="flex-1 p-4 overflow-y-auto  overflow-x-hidden">
         <ul className="space-y-2">
           {regularNavItems.map((item) => (
             <li key={item.id}>

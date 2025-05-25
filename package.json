@@ -12,7 +12,9 @@
     "format:fix": "prettier . --write",
     "format:check": "prettier . --check",
     "prepare": "husky",
-    "test": "vitest --watch"
+    "test": "vitest --watch",
+    "test:coverage": "vitest run --coverage",
+    "test:coverage:report:html": "vitest run --coverage && start coverage/index.html"
   },
   "lint-staged": {
     "*.{js,ts,jsx,tsx}": [

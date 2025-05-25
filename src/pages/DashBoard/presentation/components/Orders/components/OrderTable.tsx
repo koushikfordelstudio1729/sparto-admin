@@ -1,8 +1,10 @@
 import { Edit, Eye } from "lucide-react";
 import React from "react";
 import type { OrderTableProps } from "../Orders.types";
-import OrderStatusBadge from "./OrderStatusBadge";
-import PaymentStatusBadge from "./PaymentStatusBadge";
+import StatusBadge from "@/commons/components/StatusBadge/StatusBadge";
+import { getOrderStatusClass } from "@/commons/utils/getOrderStatusClass";
+import { getPaymentStatusClass } from "@/commons/utils/getPaymentsStatusClass";
+import IconButton from "@/commons/components/IconButton/IconButton";
 
 const OrderTable: React.FC<OrderTableProps> = ({
   orders,
@@ -58,32 +60,42 @@ const OrderTable: React.FC<OrderTableProps> = ({
                 </div>
               </td>
               <td className="p-4">
-                <OrderStatusBadge status={order.status} />
+                <StatusBadge
+                  text={
+                    order.status.charAt(0).toUpperCase() + order.status.slice(1)
+                  }
+                  className={getOrderStatusClass(order.status)}
+                />
               </td>
               <td className="p-4">
-                <PaymentStatusBadge paymentStatus={order.paymentStatus} />
+                <StatusBadge
+                  text={
+                    order.paymentStatus.charAt(0).toUpperCase() +
+                    order.paymentStatus.slice(1)
+                  }
+                  className={getPaymentStatusClass(order.paymentStatus)}
+                />
               </td>
               <td className="p-4">
                 <div className="text-sm text-gray-900">{order.orderDate}</div>
               </td>
               <td className="p-4">
                 <div className="flex items-center gap-2">
-                  <button
+                  <IconButton
+                    icon={Eye}
+                    title="View Details"
                     onClick={() => {
                       setSelectedOrder(order);
                       setShowDetailsModal(true);
                     }}
-                    className="p-1 text-blue-600 hover:bg-blue-100 rounded"
-                    title="View Details"
-                  >
-                    <Eye size={16} />
-                  </button>
-                  <button
-                    className="p-1 text-green-600 hover:bg-green-100 rounded"
+                    className="text-blue-600 hover:bg-blue-100"
+                  />
+                  <IconButton
+                    icon={Edit}
                     title="Edit Order"
-                  >
-                    <Edit size={16} />
-                  </button>
+                    onClick={() => {}}
+                    className="text-green-600 hover:bg-green-100"
+                  />
                 </div>
               </td>
             </tr>

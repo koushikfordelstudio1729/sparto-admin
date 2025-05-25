@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { LogOut, X } from "lucide-react";
+import CustomButton from "@/commons/components/Button";
 
 // Types
 interface LogoutModalProps {
@@ -73,18 +74,23 @@ const LogoutModal = ({ isOpen, onConfirm, onCancel }: LogoutModalProps) => {
 
           {/* Actions */}
           <div className="flex items-center justify-center gap-4">
-            <button
+            <CustomButton
               onClick={onCancel}
-              className="px-8 py-3 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-xl font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-offset-2"
+              variant="secondary"
+              size="md"
+              fullWidth
+              disabled={false}
             >
-              Cancel
-            </button>
-            <button
+              <p className="text-white"> Cancel</p>
+            </CustomButton>
+            <CustomButton
               onClick={onConfirm}
-              className="px-8 py-3 text-white bg-red-500 hover:bg-red-600 rounded-xl font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 shadow-lg hover:shadow-xl"
+              variant="danger"
+              size="md"
+              disabled={false}
             >
-              Yes, Logout
-            </button>
+              <p className="text-white whitespace-nowrap"> Yes, Logout</p>
+            </CustomButton>
           </div>
         </div>
       </div>

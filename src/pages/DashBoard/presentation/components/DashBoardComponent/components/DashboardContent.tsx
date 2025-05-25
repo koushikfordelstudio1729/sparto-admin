@@ -1,6 +1,6 @@
 import React from "react";
 import { DASHBOARD_STATS } from "../../../utils/dashboardConstant";
-import { StatCard } from "./StatCard";
+import { StatCard } from "../../../../../../commons/components/StatCard/StatCard";
 
 const DashboardContent: React.FC = () => (
   <div className="space-y-6">

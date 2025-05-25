@@ -1,32 +1,26 @@
-import { BarChart3, Bell, ShoppingCart, Users } from "lucide-react";
-
 export const DASHBOARD_STATS = [
   {
     title: "Total Users",
-    value: "2,543",
-    icon: Users,
-    bgColor: "bg-blue-100",
-    iconColor: "text-blue-600",
+    value: 12543,
+    variant: "blue" as const,
+    trend: { value: 12.5, isPositive: true, period: "vs last month" },
   },
   {
-    title: "Total Orders",
-    value: "1,234",
-    icon: ShoppingCart,
-    bgColor: "bg-green-100",
-    iconColor: "text-green-600",
+    title: "Active Users",
+    value: 8921,
+    variant: "green" as const,
+    trend: { value: 8.2, isPositive: true, period: "vs last month" },
   },
   {
-    title: "Revenue",
-    value: "$45,678",
-    icon: BarChart3,
-    bgColor: "bg-purple-100",
-    iconColor: "text-purple-600",
+    title: "Premium Users",
+    value: 1234,
+    variant: "purple" as const,
+    trend: { value: 15.3, isPositive: true, period: "vs last month" },
   },
   {
-    title: "Active Sessions",
-    value: "89",
-    icon: Bell,
-    bgColor: "bg-orange-100",
-    iconColor: "text-orange-600",
+    title: "Total Revenue",
+    value: "$45,210",
+    variant: "orange" as const,
+    trend: { value: 3.2, isPositive: false, period: "vs last month" },
   },
 ];

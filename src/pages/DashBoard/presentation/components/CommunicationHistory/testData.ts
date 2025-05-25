@@ -1,0 +1,76 @@
+import type { Communication } from "./CommunicationHistory.types";
+
+export const mockCommunications: Communication[] = [
+  {
+    id: "COM-001",
+    userId: "1",
+    userName: "John Doe",
+    userEmail: "john@example.com",
+    type: "email",
+    subject: "Question about my order",
+    message:
+      "Hi, I wanted to check the status of my recent order ORD-001. When can I expect delivery?",
+    status: "read",
+    timestamp: "2025-05-22T14:30:00Z",
+    relatedOrderId: "ORD-001",
+    priority: "medium",
+  },
+  {
+    id: "COM-002",
+    userId: "1",
+    userName: "John Doe",
+    userEmail: "john@example.com",
+    type: "email",
+    subject: "Re: Question about my order",
+    message:
+      "Thank you for contacting us. Your order ORD-001 is currently being processed and will be shipped within 2-3 business days. You will receive a tracking number once shipped.",
+    status: "sent",
+    timestamp: "2025-05-22T15:45:00Z",
+    adminId: "ADM-001",
+    adminName: "Sarah Admin",
+    relatedOrderId: "ORD-001",
+    priority: "medium",
+  },
+  {
+    id: "COM-003",
+    userId: "2",
+    userName: "Jane Smith",
+    userEmail: "jane@example.com",
+    type: "chat",
+    message:
+      "I need to modify my quote QUO-002. Can we add additional services?",
+    status: "pending",
+    timestamp: "2025-05-23T10:15:00Z",
+    relatedQuoteId: "QUO-002",
+    priority: "high",
+  },
+  {
+    id: "COM-004",
+    userId: "3",
+    userName: "Bob Johnson",
+    userEmail: "bob@example.com",
+    type: "support_ticket",
+    subject: "Payment failed",
+    message:
+      "My payment for order ORD-003 failed. I tried multiple times but it keeps getting declined. Please help.",
+    status: "pending",
+    timestamp: "2025-05-23T09:30:00Z",
+    relatedOrderId: "ORD-003",
+    priority: "urgent",
+  },
+  {
+    id: "COM-005",
+    userId: "2",
+    userName: "Jane Smith",
+    userEmail: "jane@example.com",
+    type: "phone",
+    message:
+      "Called customer to discuss project requirements and timeline. Customer confirmed additional features needed for marketing campaign.",
+    status: "delivered",
+    timestamp: "2025-05-21T16:20:00Z",
+    adminId: "ADM-002",
+    adminName: "Mike Sales",
+    relatedQuoteId: "QUO-002",
+    priority: "medium",
+  },
+];

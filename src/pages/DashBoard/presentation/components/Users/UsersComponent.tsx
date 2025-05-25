@@ -1,18 +1,16 @@
-import { Edit, Eye, Search, Trash2 } from "lucide-react";
+import FilterBar from "@/commons/components/FilterBar/FilterBar";
+import IconButton from "@/commons/components/IconButton/IconButton";
+import StatusBadge from "@/commons/components/StatusBadge/StatusBadge";
+import { getUserRoleClass } from "@/commons/utils/getUserRoleStatusClass";
+import { Edit, Eye, Trash2 } from "lucide-react";
 import React, { useEffect, useState } from "react";
-
-interface User {
-  id: string;
-  name: string;
-  email: string;
-  phone: string;
-  status: "active" | "inactive" | "suspended";
-  role: "user" | "premium" | "business";
-  joinDate: string;
-  lastActive: string;
-  totalOrders: number;
-  totalSpent: number;
-}
+import { DASHBOARD_STATS } from "../../utils/dashboardConstant";
+import { StatCard } from "../../../../../commons/components/StatCard/StatCard";
+import CustomCheckbox from "@/commons/components/checkbox/CustomCheckbox";
+import type { User } from "./User.types";
+import UserViewModal from "./Modals/UserViewDetails";
+import UserEditModal from "./Modals/UserEdit";
+import UserDeleteModal from "./Modals/UserDelete";
 
 const UsersComponent: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
@@ -21,12 +19,13 @@ const UsersComponent: React.FC = () => {
   const [roleFilter, setRoleFilter] = useState("all");
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
 
-  // Modal states
+  // Modal states - simplified
   const [showViewModal, setShowViewModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [editingUser, setEditingUser] = useState<User | null>(null);
+  const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [userToDelete, setUserToDelete] = useState<string | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
     const mockUsers: User[] = [
@@ -88,16 +87,38 @@ const UsersComponent: React.FC = () => {
     );
   };
 
+  // Modal handlers
+  const handleViewUser = (user: User) => {
+    setSelectedUser(user);
+    setShowViewModal(true);
+  };
+
+  const handleEditUser = (user: User) => {
+    setSelectedUser(user);
+    setShowEditModal(true);
+  };
+
   const handleDeleteUser = (userId: string) => {
     setUserToDelete(userId);
     setShowDeleteModal(true);
   };
 
-  const confirmDeleteUser = () => {
+  const handleSaveUser = (updatedUser: User) => {
+    setUsers(
+      users.map((user) => (user.id === updatedUser.id ? updatedUser : user))
+    );
+  };
+
+  const confirmDeleteUser = async () => {
     if (userToDelete) {
+      setIsDeleting(true);
+      // Simulate API call delay
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
       setUsers(users.filter((user) => user.id !== userToDelete));
       setShowDeleteModal(false);
       setUserToDelete(null);
+      setIsDeleting(false);
     }
   };
 
@@ -132,19 +153,26 @@ const UsersComponent: React.FC = () => {
     setSelectedUsers([]);
   };
 
-  const getRoleBadge = (role: User["role"]) => {
-    const colors = {
-      user: "bg-blue-100 text-blue-800",
-      premium: "bg-purple-100 text-purple-800",
-      business: "bg-orange-100 text-orange-800",
-    };
-    return (
-      <span
-        className={`px-2 py-1 text-xs font-medium rounded-full ${colors[role]}`}
-      >
-        {role.charAt(0).toUpperCase() + role.slice(1)}
-      </span>
-    );
+  const handleSelectAll = (checked: boolean) => {
+    if (checked) {
+      setSelectedUsers(filteredUsers.map((u) => u.id));
+    } else {
+      setSelectedUsers([]);
+    }
+  };
+
+  const handleSelectUser = (userId: string, checked: boolean) => {
+    if (checked) {
+      setSelectedUsers([...selectedUsers, userId]);
+    } else {
+      setSelectedUsers(selectedUsers.filter((id) => id !== userId));
+    }
+  };
+
+  // Get user name for delete modal
+  const getUserToDeleteName = () => {
+    const user = users.find((u) => u.id === userToDelete);
+    return user?.name;
   };
 
   return (
@@ -153,46 +181,36 @@ const UsersComponent: React.FC = () => {
         <h2 className="text-2xl font-bold text-gray-900">User Management</h2>
       </div>
 
-      {/* Filters and Search */}
-      <div className="flex flex-wrap gap-4 mb-6">
-        <div className="flex-1 min-w-64">
-          <div className="relative">
-            <Search
-              className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
-              size={20}
-            />
-            <input
-              type="text"
-              placeholder="Search users..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            />
-          </div>
-        </div>
-
-        <select
-          value={statusFilter}
-          onChange={(e) => setStatusFilter(e.target.value)}
-          className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-        >
-          <option value="all">All Status</option>
-          <option value="active">Active</option>
-          <option value="inactive">Inactive</option>
-          <option value="suspended">Suspended</option>
-        </select>
-
-        <select
-          value={roleFilter}
-          onChange={(e) => setRoleFilter(e.target.value)}
-          className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-        >
-          <option value="all">All Roles</option>
-          <option value="user">User</option>
-          <option value="premium">Premium</option>
-          <option value="business">Business</option>
-        </select>
-      </div>
+      <FilterBar
+        search={{
+          value: searchTerm,
+          onChange: setSearchTerm,
+          placeholder: "Search users...",
+        }}
+        filters={[
+          {
+            value: statusFilter,
+            onChange: setStatusFilter,
+            options: [
+              { value: "all", label: "All Status" },
+              { value: "active", label: "Active" },
+              { value: "inactive", label: "Inactive" },
+              { value: "suspended", label: "Suspended" },
+            ],
+          },
+          {
+            value: roleFilter,
+            onChange: setRoleFilter,
+            options: [
+              { value: "all", label: "All Roles" },
+              { value: "user", label: "User" },
+              { value: "premium", label: "Premium" },
+              { value: "business", label: "Business" },
+            ],
+          },
+        ]}
+        className="mb-6"
+      />
 
       {/* Bulk Actions */}
       {selectedUsers.length > 0 && (
@@ -227,19 +245,15 @@ const UsersComponent: React.FC = () => {
           <thead>
             <tr className="border-b border-gray-200">
               <th className="text-left p-4">
-                <input
-                  type="checkbox"
-                  onChange={(e) => {
-                    if (e.target.checked) {
-                      setSelectedUsers(filteredUsers.map((u) => u.id));
-                    } else {
-                      setSelectedUsers([]);
-                    }
-                  }}
+                <CustomCheckbox
                   checked={
                     selectedUsers.length === filteredUsers.length &&
                     filteredUsers.length > 0
                   }
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                    handleSelectAll(e.target.checked)
+                  }
+                  className="m-0"
                 />
               </th>
               <th className="text-left p-4 font-semibold text-gray-900">
@@ -275,18 +289,12 @@ const UsersComponent: React.FC = () => {
                 className="border-b border-gray-100 hover:bg-gray-50"
               >
                 <td className="p-4">
-                  <input
-                    type="checkbox"
+                  <CustomCheckbox
                     checked={selectedUsers.includes(user.id)}
-                    onChange={(e) => {
-                      if (e.target.checked) {
-                        setSelectedUsers([...selectedUsers, user.id]);
-                      } else {
-                        setSelectedUsers(
-                          selectedUsers.filter((id) => id !== user.id)
-                        );
-                      }
-                    }}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                      handleSelectUser(user.id, e.target.checked)
+                    }
+                    className="m-0"
                   />
                 </td>
                 <td className="p-4">
@@ -317,7 +325,14 @@ const UsersComponent: React.FC = () => {
                     <option value="suspended">Suspended</option>
                   </select>
                 </td>
-                <td className="p-4">{getRoleBadge(user.role)}</td>
+                <td className="p-4">
+                  <StatusBadge
+                    text={
+                      user.role.charAt(0).toUpperCase() + user.role.slice(1)
+                    }
+                    className={getUserRoleClass(user.role)}
+                  />
+                </td>
                 <td className="p-4 text-sm text-gray-900">{user.joinDate}</td>
                 <td className="p-4 text-sm text-gray-900">
                   {user.totalOrders}
@@ -327,30 +342,24 @@ const UsersComponent: React.FC = () => {
                 </td>
                 <td className="p-4">
                   <div className="flex items-center gap-2">
-                    <button
-                      onClick={() => {
-                        setEditingUser(user);
-                        setShowEditModal(true);
-                      }}
-                      className="p-1 text-blue-600 hover:bg-blue-100 rounded"
-                    >
-                      <Edit size={16} />
-                    </button>
-                    <button
-                      onClick={() => {
-                        setEditingUser(user);
-                        setShowViewModal(true);
-                      }}
+                    <IconButton
+                      icon={Edit}
+                      title="Edit User"
+                      onClick={() => handleEditUser(user)}
+                      className="text-blue-600 hover:bg-blue-100"
+                    />
+                    <IconButton
+                      icon={Eye}
+                      title="View Details"
+                      onClick={() => handleViewUser(user)}
                       className="p-1 text-green-600 hover:bg-green-100 rounded"
-                    >
-                      <Eye size={16} />
-                    </button>
-                    <button
+                    />
+                    <IconButton
+                      icon={Trash2}
+                      title="Delete User"
                       onClick={() => handleDeleteUser(user.id)}
                       className="p-1 text-red-600 hover:bg-red-100 rounded"
-                    >
-                      <Trash2 size={16} />
-                    </button>
+                    />
                   </div>
                 </td>
               </tr>
@@ -367,188 +376,32 @@ const UsersComponent: React.FC = () => {
 
       {/* Stats */}
       <div className="mt-6 grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div className="bg-blue-50 p-4 rounded-lg">
-          <div className="text-2xl font-bold text-blue-600">{users.length}</div>
-          <div className="text-sm text-blue-600">Total Users</div>
-        </div>
-        <div className="bg-green-50 p-4 rounded-lg">
-          <div className="text-2xl font-bold text-green-600">
-            {users.filter((u) => u.status === "active").length}
-          </div>
-          <div className="text-sm text-green-600">Active Users</div>
-        </div>
-        <div className="bg-purple-50 p-4 rounded-lg">
-          <div className="text-2xl font-bold text-purple-600">
-            {users.filter((u) => u.role === "premium").length}
-          </div>
-          <div className="text-sm text-purple-600">Premium Users</div>
-        </div>
-        <div className="bg-orange-50 p-4 rounded-lg">
-          <div className="text-2xl font-bold text-orange-600">
-            ${users.reduce((sum, u) => sum + u.totalSpent, 0).toFixed(0)}
-          </div>
-          <div className="text-sm text-orange-600">Total Revenue</div>
-        </div>
+        {DASHBOARD_STATS.map((stat) => (
+          <StatCard key={stat.title} {...stat} />
+        ))}
       </div>
 
-      {/* View Modal */}
-      {showViewModal && (
-        <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 max-w-lg w-full">
-            <h3 className="text-2xl font-semibold mb-4">User Details</h3>
-            {editingUser && (
-              <div>
-                <div>
-                  <strong>Name:</strong> {editingUser.name}
-                </div>
-                <div>
-                  <strong>Email:</strong> {editingUser.email}
-                </div>
-                <div>
-                  <strong>Phone:</strong> {editingUser.phone}
-                </div>
-                <div>
-                  <strong>Status:</strong> {editingUser.status}
-                </div>
-                <div>
-                  <strong>Role:</strong> {editingUser.role}
-                </div>
-                <div>
-                  <strong>Join Date:</strong> {editingUser.joinDate}
-                </div>
-                <div>
-                  <strong>Total Orders:</strong> {editingUser.totalOrders}
-                </div>
-                <div>
-                  <strong>Total Spent:</strong> ${editingUser.totalSpent}
-                </div>
-              </div>
-            )}
-            <div className="flex justify-end gap-4 mt-4">
-              <button
-                onClick={() => setShowViewModal(false)}
-                className="px-4 py-2 bg-gray-300 rounded-lg"
-              >
-                Close
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Modals */}
+      <UserViewModal
+        isOpen={showViewModal}
+        onClose={() => setShowViewModal(false)}
+        user={selectedUser}
+      />
 
-      {/* Edit Modal */}
-      {showEditModal && (
-        <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 max-w-lg w-full">
-            <h3 className="text-2xl font-semibold mb-4">Edit User</h3>
-            {editingUser && (
-              <div>
-                <div>
-                  <label className="block">Name</label>
-                  <input
-                    type="text"
-                    value={editingUser.name}
-                    className="w-full border p-2 mb-4"
-                  />
-                </div>
-                <div>
-                  <label className="block">Email</label>
-                  <input
-                    type="text"
-                    value={editingUser.email}
-                    className="w-full border p-2 mb-4"
-                  />
-                </div>
-                <div>
-                  <label className="block">Phone</label>
-                  <input
-                    type="text"
-                    value={editingUser.phone}
-                    className="w-full border p-2 mb-4"
-                  />
-                </div>
-                <div>
-                  <label className="block">Status</label>
-                  <select
-                    value={editingUser.status}
-                    onChange={(e) =>
-                      setEditingUser({
-                        ...editingUser,
-                        status: e.target.value as User["status"],
-                      })
-                    }
-                    className="w-full border p-2 mb-4"
-                  >
-                    <option value="active">Active</option>
-                    <option value="inactive">Inactive</option>
-                    <option value="suspended">Suspended</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block">Role</label>
-                  <select
-                    value={editingUser.role}
-                    onChange={(e) =>
-                      setEditingUser({
-                        ...editingUser,
-                        role: e.target.value as User["role"],
-                      })
-                    }
-                    className="w-full border p-2 mb-4"
-                  >
-                    <option value="user">User</option>
-                    <option value="premium">Premium</option>
-                    <option value="business">Business</option>
-                  </select>
-                </div>
-              </div>
-            )}
-            <div className="flex justify-end gap-4 mt-4">
-              <button
-                onClick={() => setShowEditModal(false)}
-                className="px-4 py-2 bg-gray-300 rounded-lg"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={() => {
-                  // Save changes here
-                  setShowEditModal(false);
-                }}
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg"
-              >
-                Save
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      <UserEditModal
+        isOpen={showEditModal}
+        onClose={() => setShowEditModal(false)}
+        onSave={handleSaveUser}
+        user={selectedUser}
+      />
 
-      {/* Delete Modal */}
-      {showDeleteModal && (
-        <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 max-w-lg w-full">
-            <h3 className="text-2xl font-semibold mb-4">Delete User</h3>
-            <div className="mb-4">
-              Are you sure you want to delete this user?
-            </div>
-            <div className="flex justify-end gap-4">
-              <button
-                onClick={() => setShowDeleteModal(false)}
-                className="px-4 py-2 bg-gray-300 rounded-lg"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={confirmDeleteUser}
-                className="px-4 py-2 bg-red-600 text-white rounded-lg"
-              >
-                Delete
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      <UserDeleteModal
+        isOpen={showDeleteModal}
+        onClose={() => setShowDeleteModal(false)}
+        onConfirm={confirmDeleteUser}
+        userName={getUserToDeleteName()}
+        isLoading={isDeleting}
+      />
     </div>
   );
 };

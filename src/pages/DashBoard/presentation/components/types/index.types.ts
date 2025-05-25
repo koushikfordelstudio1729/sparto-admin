@@ -11,11 +11,3 @@ export interface NavButtonProps {
   isActive: boolean;
   sidebarOpen: boolean;
 }
-
-export interface StatCardProps {
-  title: string;
-  value: number | string;
-  icon: React.ElementType;
-  bgColor: string;
-  iconColor: string;
-}

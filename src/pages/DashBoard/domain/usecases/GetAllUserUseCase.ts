@@ -1,4 +1,4 @@
-import type { DashBoardEntity } from "../entities/DashBoardEntity";
+import type { UserEntity } from "@/commons/domain/entities/UserEntity";
 import type { DashBoardRepository } from "../repository/DashBoardRepository";
 
 export class GetAllUserUseCase {
@@ -8,7 +8,7 @@ export class GetAllUserUseCase {
     this.repository = repository;
   }
 
-  async execute(): Promise<DashBoardEntity[]> {
-    return await this.repository.getAll();
+  async execute(): Promise<UserEntity[]> {
+    return await this.repository.getAllUsers();
   }
 }

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import type { UserEditModalProps } from "./UserEdit.types";
-import type { User } from "../User.types";
 import CustomButton from "@/commons/components/Button";
+import type { UserEntity } from "@/commons/domain/entities/UserEntity";
 
 const UserEditModal: React.FC<UserEditModalProps> = ({
   isOpen,
@@ -9,7 +9,7 @@ const UserEditModal: React.FC<UserEditModalProps> = ({
   onSave,
   user,
 }) => {
-  const [formData, setFormData] = useState<User | null>(null);
+  const [formData, setFormData] = useState<UserEntity | null>(null);
 
   useEffect(() => {
     if (user) {
@@ -19,7 +19,7 @@ const UserEditModal: React.FC<UserEditModalProps> = ({
 
   if (!isOpen || !formData) return null;
 
-  const handleInputChange = (field: keyof User, value: string | number) => {
+  const handleInputChange = (field: keyof UserEntity, value: string | number) => {
     setFormData((prev) => (prev ? { ...prev, [field]: value } : null));
   };
 
@@ -55,8 +55,12 @@ const UserEditModal: React.FC<UserEditModalProps> = ({
             </label>
             <input
               type="email"
-              value={formData.email}
-              onChange={(e) => handleInputChange("email", e.target.value)}
+              value={formData.emails[0].email}
+              onChange={(e) => {
+                const updatedEmails = [...formData.emails];
+                updatedEmails[0] = { ...updatedEmails[0], email: e.target.value };
+                setFormData({ ...formData, emails: updatedEmails });
+              }}
               className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               required
             />
@@ -68,8 +72,12 @@ const UserEditModal: React.FC<UserEditModalProps> = ({
             </label>
             <input
               type="tel"
-              value={formData.phone}
-              onChange={(e) => handleInputChange("phone", e.target.value)}
+              value={formData.phones[0].number}
+              onChange={(e) => {
+                const updatedPhones = [...formData.phones];
+                updatedPhones[0] = { ...updatedPhones[0], number: e.target.value };
+                setFormData({ ...formData, phones: updatedPhones });
+              }}
               className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               required
             />
@@ -82,7 +90,7 @@ const UserEditModal: React.FC<UserEditModalProps> = ({
             <select
               value={formData.status}
               onChange={(e) =>
-                handleInputChange("status", e.target.value as User["status"])
+                handleInputChange("status", e.target.value as UserEntity["status"])
               }
               className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             >
@@ -97,9 +105,9 @@ const UserEditModal: React.FC<UserEditModalProps> = ({
               Role
             </label>
             <select
-              value={formData.role}
+              value={formData.roleId}
               onChange={(e) =>
-                handleInputChange("role", e.target.value as User["role"])
+                handleInputChange("roleId", e.target.value as UserEntity["roleId"])
               }
               className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             >
@@ -109,7 +117,7 @@ const UserEditModal: React.FC<UserEditModalProps> = ({
             </select>
           </div>
 
-          <div>
+          {/* <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Join Date
             </label>
@@ -119,9 +127,9 @@ const UserEditModal: React.FC<UserEditModalProps> = ({
               onChange={(e) => handleInputChange("joinDate", e.target.value)}
               className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
-          </div>
+          </div> */}
 
-          <div>
+          {/* <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Total Orders
             </label>
@@ -134,9 +142,9 @@ const UserEditModal: React.FC<UserEditModalProps> = ({
               className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               min="0"
             />
-          </div>
+          </div> */}
 
-          <div>
+          {/* <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Total Spent ($)
             </label>
@@ -150,7 +158,7 @@ const UserEditModal: React.FC<UserEditModalProps> = ({
               className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               min="0"
             />
-          </div>
+          </div> */}
 
           <div className="flex justify-end gap-4 pt-4">
             <CustomButton

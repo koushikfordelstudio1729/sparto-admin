@@ -1,3 +1,4 @@
+import type { UserEntity } from "@/commons/domain/entities/UserEntity";
 import type { DashBoardEntity } from "../../domain/entities/DashBoardEntity";
 import type { DashBoardRepository } from "../../domain/repository/DashBoardRepository";
 import { DashBoardApiDatasource } from "../datasource/DashBoardApiDatasource";
@@ -10,8 +11,8 @@ export class DashBoardRepositoryImpl implements DashBoardRepository {
     this.dataSource = dataSource;
   }
 
-  async getAll(): Promise<DashBoardEntity[]> {
-    const models = await this.dataSource.fetchAll();
+  async getAllUsers(): Promise<UserEntity[]> {
+    const models = await this.dataSource.getAllUsers();
     return models.map((model) => model.toEntity());
   }
 

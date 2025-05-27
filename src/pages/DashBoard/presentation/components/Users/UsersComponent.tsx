@@ -1,125 +1,82 @@
+import type { RootState } from "@/app/store/store";
+import CustomCheckbox from "@/commons/components/checkbox/CustomCheckbox";
 import FilterBar from "@/commons/components/FilterBar/FilterBar";
 import IconButton from "@/commons/components/IconButton/IconButton";
 import StatusBadge from "@/commons/components/StatusBadge/StatusBadge";
+import type { UserEntity } from "@/commons/domain/entities/UserEntity";
 import { getUserRoleClass } from "@/commons/utils/getUserRoleStatusClass";
 import { Edit, Eye, Trash2 } from "lucide-react";
-import React, { useEffect, useState } from "react";
-import { DASHBOARD_STATS } from "../../utils/dashboardConstant";
+import React, { useState } from "react";
+import { useSelector } from "react-redux";
 import { StatCard } from "../../../../../commons/components/StatCard/StatCard";
-import CustomCheckbox from "@/commons/components/checkbox/CustomCheckbox";
-import type { User } from "./User.types";
-import UserViewModal from "./Modals/UserViewDetails";
-import UserEditModal from "./Modals/UserEdit";
+import { DASHBOARD_STATS } from "../../utils/dashboardConstant";
 import UserDeleteModal from "./Modals/UserDelete";
+import UserEditModal from "./Modals/UserEdit";
+import UserViewModal from "./Modals/UserViewDetails";
 
 const UsersComponent: React.FC = () => {
-  const [users, setUsers] = useState<User[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [roleFilter, setRoleFilter] = useState("all");
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
+  const { users } = useSelector((state: RootState) => state.dashBoardPage);
 
-  // Modal states - simplified
+  // Modal states - now tracking specific users
   const [showViewModal, setShowViewModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [selectedUser, setSelectedUser] = useState<User | null>(null);
-  const [userToDelete, setUserToDelete] = useState<string | null>(null);
-  const [isDeleting, setIsDeleting] = useState(false);
-
-  useEffect(() => {
-    const mockUsers: User[] = [
-      {
-        id: "1",
-        name: "John Doe",
-        email: "john@example.com",
-        phone: "+1234567890",
-        status: "active",
-        role: "user",
-        joinDate: "2024-01-15",
-        lastActive: "2025-05-20",
-        totalOrders: 12,
-        totalSpent: 2450.5,
-      },
-      {
-        id: "2",
-        name: "Jane Smith",
-        email: "jane@example.com",
-        phone: "+1234567891",
-        status: "active",
-        role: "premium",
-        joinDate: "2024-02-20",
-        lastActive: "2025-05-22",
-        totalOrders: 25,
-        totalSpent: 5680.75,
-      },
-      {
-        id: "3",
-        name: "Bob Johnson",
-        email: "bob@example.com",
-        phone: "+1234567892",
-        status: "suspended",
-        role: "user",
-        joinDate: "2024-03-10",
-        lastActive: "2025-05-18",
-        totalOrders: 3,
-        totalSpent: 890.25,
-      },
-    ];
-    setUsers(mockUsers);
-  }, []);
+  const [selectedUser, setSelectedUser] = useState<UserEntity | null>(null);
+  const [userToDelete, setUserToDelete] = useState<string>("");
 
   const filteredUsers = users.filter((user) => {
-    const matchesSearch =
-      user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.email.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesSearch = user.name
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase());
     const matchesStatus =
       statusFilter === "all" || user.status === statusFilter;
-    const matchesRole = roleFilter === "all" || user.role === roleFilter;
+    const matchesRole = roleFilter === "all" || user.roleId === roleFilter;
     return matchesSearch && matchesStatus && matchesRole;
   });
 
-  const handleStatusChange = (userId: string, newStatus: User["status"]) => {
-    setUsers(
-      users.map((user) =>
-        user.id === userId ? { ...user, status: newStatus } : user
-      )
-    );
+  const handleStatusChange = (
+    userId: string,
+    newStatus: UserEntity["status"]
+  ) => {
+    console.log(userId, newStatus)
   };
 
-  // Modal handlers
-  const handleViewUser = (user: User) => {
+  // Modal handlers - now properly setting selected user
+  const handleViewUser = (user: UserEntity) => {
     setSelectedUser(user);
     setShowViewModal(true);
   };
 
-  const handleEditUser = (user: User) => {
+  const handleEditUser = (user: UserEntity) => {
     setSelectedUser(user);
     setShowEditModal(true);
   };
 
   const handleDeleteUser = (userId: string) => {
-    setUserToDelete(userId);
-    setShowDeleteModal(true);
+    const user = users.find((u) => u.id === userId);
+    if (user) {
+      setUserToDelete(user.name);
+      setSelectedUser(user);
+      setShowDeleteModal(true);
+    }
   };
 
-  const handleSaveUser = (updatedUser: User) => {
-    setUsers(
-      users.map((user) => (user.id === updatedUser.id ? updatedUser : user))
-    );
+  const handleSaveUser = (updatedUser: UserEntity) => {
+    console.log(updatedUser)
+    // Handle save logic here
+    setShowEditModal(false);
+    setSelectedUser(null);
   };
 
   const confirmDeleteUser = async () => {
-    if (userToDelete) {
-      setIsDeleting(true);
-      // Simulate API call delay
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      setUsers(users.filter((user) => user.id !== userToDelete));
-      setShowDeleteModal(false);
-      setUserToDelete(null);
-      setIsDeleting(false);
-    }
+    // Handle delete logic here
+    setShowDeleteModal(false);
+    setSelectedUser(null);
+    setUserToDelete("");
   };
 
   const handleBulkAction = (action: string) => {
@@ -127,27 +84,10 @@ const UsersComponent: React.FC = () => {
 
     switch (action) {
       case "activate":
-        setUsers(
-          users.map((user) =>
-            selectedUsers.includes(user.id)
-              ? { ...user, status: "active" as const }
-              : user
-          )
-        );
         break;
       case "deactivate":
-        setUsers(
-          users.map((user) =>
-            selectedUsers.includes(user.id)
-              ? { ...user, status: "inactive" as const }
-              : user
-          )
-        );
         break;
       case "delete":
-        if (window.confirm(`Delete ${selectedUsers.length} selected users?`)) {
-          setUsers(users.filter((user) => !selectedUsers.includes(user.id)));
-        }
         break;
     }
     setSelectedUsers([]);
@@ -169,10 +109,21 @@ const UsersComponent: React.FC = () => {
     }
   };
 
-  // Get user name for delete modal
-  const getUserToDeleteName = () => {
-    const user = users.find((u) => u.id === userToDelete);
-    return user?.name;
+  // Close modal handlers
+  const handleCloseViewModal = () => {
+    setShowViewModal(false);
+    setSelectedUser(null);
+  };
+
+  const handleCloseEditModal = () => {
+    setShowEditModal(false);
+    setSelectedUser(null);
+  };
+
+  const handleCloseDeleteModal = () => {
+    setShowDeleteModal(false);
+    setSelectedUser(null);
+    setUserToDelete("");
   };
 
   return (
@@ -305,8 +256,12 @@ const UsersComponent: React.FC = () => {
                 </td>
                 <td className="p-4">
                   <div>
-                    <div className="text-sm text-gray-900">{user.email}</div>
-                    <div className="text-sm text-gray-500">{user.phone}</div>
+                    <div className="text-sm text-gray-900">
+                      {user.emails[0].email}
+                    </div>
+                    <div className="text-sm text-gray-500">
+                      {user.phones[0].number}
+                    </div>
                   </div>
                 </td>
                 <td className="p-4">
@@ -315,7 +270,7 @@ const UsersComponent: React.FC = () => {
                     onChange={(e) =>
                       handleStatusChange(
                         user.id,
-                        e.target.value as User["status"]
+                        e.target.value as UserEntity["status"]
                       )
                     }
                     className="text-sm border-0 bg-transparent focus:ring-0"
@@ -327,19 +282,17 @@ const UsersComponent: React.FC = () => {
                 </td>
                 <td className="p-4">
                   <StatusBadge
-                    text={
-                      user.role.charAt(0).toUpperCase() + user.role.slice(1)
-                    }
-                    className={getUserRoleClass(user.role)}
+                    text={user.roleId}
+                    className={getUserRoleClass(user.roleId)}
                   />
                 </td>
-                <td className="p-4 text-sm text-gray-900">{user.joinDate}</td>
+                {/* <td className="p-4 text-sm text-gray-900">{user.joinDate}</td>
                 <td className="p-4 text-sm text-gray-900">
                   {user.totalOrders}
-                </td>
-                <td className="p-4 text-sm text-gray-900">
+                </td> */}
+                {/* <td className="p-4 text-sm text-gray-900">
                   ${user.totalSpent.toFixed(2)}
-                </td>
+                </td> */}
                 <td className="p-4">
                   <div className="flex items-center gap-2">
                     <IconButton
@@ -381,26 +334,26 @@ const UsersComponent: React.FC = () => {
         ))}
       </div>
 
-      {/* Modals */}
+      {/* Modals - Now passing individual user instead of array */}
       <UserViewModal
         isOpen={showViewModal}
-        onClose={() => setShowViewModal(false)}
+        onClose={handleCloseViewModal}
         user={selectedUser}
       />
 
       <UserEditModal
         isOpen={showEditModal}
-        onClose={() => setShowEditModal(false)}
+        onClose={handleCloseEditModal}
         onSave={handleSaveUser}
         user={selectedUser}
       />
 
       <UserDeleteModal
         isOpen={showDeleteModal}
-        onClose={() => setShowDeleteModal(false)}
+        onClose={handleCloseDeleteModal}
         onConfirm={confirmDeleteUser}
-        userName={getUserToDeleteName()}
-        isLoading={isDeleting}
+        userName={userToDelete}
+        isLoading={false}
       />
     </div>
   );

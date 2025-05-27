@@ -1,7 +1,8 @@
+import type { UserEntity } from "@/commons/domain/entities/UserEntity";
 import type { DashBoardEntity } from "../entities/DashBoardEntity";
 
 export interface DashBoardRepository {
-  getAll(): Promise<DashBoardEntity[]>;
+  getAllUsers(): Promise<UserEntity[]>;
 
   create(entity: DashBoardEntity): Promise<DashBoardEntity>;
 

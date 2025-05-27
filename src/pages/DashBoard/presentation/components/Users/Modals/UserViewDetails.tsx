@@ -23,11 +23,11 @@ const UserViewModal: React.FC<UserViewModalProps> = ({
           </div>
           <div className="flex justify-between">
             <span className="font-medium text-gray-700">Email:</span>
-            <span className="text-gray-900">{user.email}</span>
+            <span className="text-gray-900">{user.emails[0].email}</span>
           </div>
           <div className="flex justify-between">
             <span className="font-medium text-gray-700">Phone:</span>
-            <span className="text-gray-900">{user.phone}</span>
+            <span className="text-gray-900">{user.phones[0].number}</span>
           </div>
           <div className="flex justify-between">
             <span className="font-medium text-gray-700">Status:</span>
@@ -40,20 +40,20 @@ const UserViewModal: React.FC<UserViewModalProps> = ({
           <div className="flex justify-between">
             <span className="font-medium text-gray-700">Role:</span>
             <StatusBadge
-              text={user.role}
-              className={getUserRoleClass(user.role)}
+              text={user.roleId}
+              className={getUserRoleClass(user.roleId)}
             />
           </div>
 
           <div className="flex justify-between">
             <span className="font-medium text-gray-700">Role:</span>
-            <span className="capitalize text-gray-900">{user.role}</span>
+            <span className="capitalize text-gray-900">{user.roleId}</span>
           </div>
-          <div className="flex justify-between">
+          {/* <div className="flex justify-between">
             <span className="font-medium text-gray-700">Join Date:</span>
             <span className="text-gray-900">{user.joinDate}</span>
-          </div>
-          <div className="flex justify-between">
+          </div> */}
+          {/* <div className="flex justify-between">
             <span className="font-medium text-gray-700">Last Active:</span>
             <span className="text-gray-900">{user.lastActive}</span>
           </div>
@@ -64,7 +64,7 @@ const UserViewModal: React.FC<UserViewModalProps> = ({
           <div className="flex justify-between">
             <span className="font-medium text-gray-700">Total Spent:</span>
             <span className="text-gray-900">${user.totalSpent.toFixed(2)}</span>
-          </div>
+          </div> */}
         </div>
         <div className="flex justify-end mt-6">
           <CustomButton

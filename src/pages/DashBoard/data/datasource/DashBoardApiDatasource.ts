@@ -1,5 +1,6 @@
-import { AxiosClient } from "@/commons/network/AxiosClient";
 import { ApiEndpoints } from "@/commons/constants/apiEndpoints";
+import { UserModel } from "@/commons/data/models/UserModel";
+import { AxiosClient } from "@/commons/network/AxiosClient";
 import type { CreateUserDTO } from "../dtos/CreateUserDTO";
 import type { UpdateUserDTO } from "../dtos/UpdateUserDTO";
 import { DashBoardModel } from "../models/DashBoardModel";
@@ -11,12 +12,12 @@ export class DashBoardApiDatasource {
     this.axiosClient = axiosClient;
   }
 
-  async fetchAll(): Promise<DashBoardModel[]> {
+  async getAllUsers(): Promise<UserModel[]> {
     const response = await this.axiosClient
       .getInstance()
-      .get(ApiEndpoints.sample.path);
+      .get(ApiEndpoints.allUsers.path);
 
-    return (response.data as []).map((obj) => DashBoardModel.fromJson(obj));
+    return (response.data as []).map((obj) => UserModel.fromJson(obj));
   }
 
   async create(payload: CreateUserDTO): Promise<DashBoardModel> {

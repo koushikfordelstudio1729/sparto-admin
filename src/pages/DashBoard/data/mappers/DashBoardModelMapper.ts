@@ -1,20 +1,27 @@
-import type { DashBoardEntity } from "../../domain/entities/DashBoardEntity";
+import type { UserEntity } from "@/commons/domain/entities/UserEntity";
 import type { CreateUserDTO } from "../dtos/CreateUserDTO";
 import type { UpdateUserDTO } from "../dtos/UpdateUserDTO";
 
 export class DashBoardModelMapper {
-  static toCreateDTO(entity: DashBoardEntity): CreateUserDTO {
+  static toCreateDTO(entity: UserEntity): CreateUserDTO {
     return {
       name: entity.name,
-      description: entity.description ?? "",
+      phones: entity.phones ?? [],
+      emails: entity.emails ?? [],
+      addresses: entity.addresses ?? [],
+      role_id: entity.roleId,
+      terms_accepted: entity.termsAccepted ?? false,
     };
   }
 
-  static toUpdateDTO(id: string, entity: DashBoardEntity): UpdateUserDTO {
+  static toUpdateDTO(entity: UserEntity): UpdateUserDTO {
     return {
-      id,
+      id: entity.id,
       name: entity.name,
-      description: entity.description ?? "",
+      phones: entity.phones,
+      emails: entity.emails,
+      addresses: entity.addresses ?? [],
+      profile_picture_url: entity.profilePictureUrl,
     };
   }
 }

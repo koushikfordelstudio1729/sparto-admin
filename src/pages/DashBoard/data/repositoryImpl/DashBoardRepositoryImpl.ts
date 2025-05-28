@@ -16,15 +16,15 @@ export class DashBoardRepositoryImpl implements DashBoardRepository {
     return models.map((model) => model.toEntity());
   }
 
-  async create(entity: DashBoardEntity): Promise<DashBoardEntity> {
+  async createUser(entity: UserEntity): Promise<DashBoardEntity> {
     const dto = DashBoardModelMapper.toCreateDTO(entity);
-    const model = await this.dataSource.create(dto);
+    const model = await this.dataSource.createUser(dto);
     return model.toEntity();
   }
 
-  async update(id: string, entity: DashBoardEntity): Promise<DashBoardEntity> {
-    const dto = DashBoardModelMapper.toUpdateDTO(id, entity);
-    const model = await this.dataSource.update(id, dto);
+  async updateUser(id: string, entity: UserEntity): Promise<DashBoardEntity> {
+    const dto = DashBoardModelMapper.toUpdateDTO(entity);
+    const model = await this.dataSource.updateUser(id, dto);
     return model.toEntity();
   }
 

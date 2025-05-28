@@ -19,7 +19,7 @@ export class DashBoardApiDatasource {
     return (data.data.users as []).map((obj) => UserModel.fromJson(obj));
   }
 
-  async create(payload: CreateUserDTO): Promise<DashBoardModel> {
+  async createUser(payload: CreateUserDTO): Promise<DashBoardModel> {
     const response = await this.axiosClient
       .getInstance()
       .post(ApiEndpoints.sample.path, payload);
@@ -27,7 +27,10 @@ export class DashBoardApiDatasource {
     return DashBoardModel.fromJson(response.data);
   }
 
-  async update(id: string, payload: UpdateUserDTO): Promise<DashBoardModel> {
+  async updateUser(
+    id: string,
+    payload: UpdateUserDTO
+  ): Promise<DashBoardModel> {
     const response = await this.axiosClient
       .getInstance()
       .put(`${ApiEndpoints.sample.path}/${id}`, payload);

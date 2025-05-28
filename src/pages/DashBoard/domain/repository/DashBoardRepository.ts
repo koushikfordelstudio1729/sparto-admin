@@ -4,9 +4,9 @@ import type { DashBoardEntity } from "../entities/DashBoardEntity";
 export interface DashBoardRepository {
   getAllUsers(): Promise<UserEntity[]>;
 
-  create(entity: DashBoardEntity): Promise<DashBoardEntity>;
+  createUser(entity: UserEntity): Promise<DashBoardEntity>;
 
-  update(id: string, entity: DashBoardEntity): Promise<DashBoardEntity>;
+  updateUser(id: string, entity: DashBoardEntity): Promise<DashBoardEntity>;
 
   delete(id: string): Promise<void>;
 }

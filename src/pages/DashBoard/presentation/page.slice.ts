@@ -20,6 +20,6 @@ const pageSlice = createSlice({
   },
 });
 
-export const {setUsers, setLoading } = pageSlice.actions;
+export const { setUsers, setLoading } = pageSlice.actions;
 
 export const dashBoardPageReducer = pageSlice.reducer;

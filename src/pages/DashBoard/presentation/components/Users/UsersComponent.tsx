@@ -2,9 +2,7 @@ import type { RootState } from "@/app/store/store";
 import CustomCheckbox from "@/commons/components/checkbox/CustomCheckbox";
 import FilterBar from "@/commons/components/FilterBar/FilterBar";
 import IconButton from "@/commons/components/IconButton/IconButton";
-import StatusBadge from "@/commons/components/StatusBadge/StatusBadge";
 import type { UserEntity } from "@/commons/domain/entities/UserEntity";
-import { getUserRoleClass } from "@/commons/utils/getUserRoleStatusClass";
 import { Edit, Eye, Trash2 } from "lucide-react";
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
@@ -20,7 +18,6 @@ const UsersComponent: React.FC = () => {
   const [roleFilter, setRoleFilter] = useState("all");
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
   const { users } = useSelector((state: RootState) => state.dashBoardPage);
-
   // Modal states - now tracking specific users
   const [showViewModal, setShowViewModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
@@ -42,7 +39,11 @@ const UsersComponent: React.FC = () => {
     userId: string,
     newStatus: UserEntity["status"]
   ) => {
-    console.log(userId, newStatus)
+    console.log(userId, newStatus);
+  };
+
+  const handleRoleChange = (role: string, newStatus: UserEntity["role"]) => {
+    console.log(role, newStatus);
   };
 
   // Modal handlers - now properly setting selected user
@@ -66,7 +67,7 @@ const UsersComponent: React.FC = () => {
   };
 
   const handleSaveUser = (updatedUser: UserEntity) => {
-    console.log(updatedUser)
+    console.log(updatedUser);
     // Handle save logic here
     setShowEditModal(false);
     setSelectedUser(null);
@@ -219,15 +220,7 @@ const UsersComponent: React.FC = () => {
               <th className="text-left p-4 font-semibold text-gray-900">
                 Role
               </th>
-              <th className="text-left p-4 font-semibold text-gray-900">
-                Join Date
-              </th>
-              <th className="text-left p-4 font-semibold text-gray-900">
-                Orders
-              </th>
-              <th className="text-left p-4 font-semibold text-gray-900">
-                Total Spent
-              </th>
+
               <th className="text-left p-4 font-semibold text-gray-900">
                 Actions
               </th>
@@ -277,22 +270,25 @@ const UsersComponent: React.FC = () => {
                   >
                     <option value="active">Active</option>
                     <option value="inactive">Inactive</option>
-                    <option value="suspended">Suspended</option>
+                    <option value="deleted">Deleted</option>
                   </select>
                 </td>
+
                 <td className="p-4">
-                  <StatusBadge
-                    text={user.roleId}
-                    className={getUserRoleClass(user.roleId)}
-                  />
+                  <select
+                    value={user.role}
+                    onChange={(e) =>
+                      handleRoleChange(
+                        user.role,
+                        e.target.value as UserEntity["role"]
+                      )
+                    }
+                    className="text-sm border-0 bg-transparent focus:ring-0"
+                  >
+                    <option value="active">User</option>
+                    <option value="inactive">Admin</option>
+                  </select>
                 </td>
-                {/* <td className="p-4 text-sm text-gray-900">{user.joinDate}</td>
-                <td className="p-4 text-sm text-gray-900">
-                  {user.totalOrders}
-                </td> */}
-                {/* <td className="p-4 text-sm text-gray-900">
-                  ${user.totalSpent.toFixed(2)}
-                </td> */}
                 <td className="p-4">
                   <div className="flex items-center gap-2">
                     <IconButton

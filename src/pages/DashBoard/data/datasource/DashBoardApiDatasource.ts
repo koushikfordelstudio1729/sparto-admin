@@ -13,11 +13,10 @@ export class DashBoardApiDatasource {
   }
 
   async getAllUsers(): Promise<UserModel[]> {
-    const response = await this.axiosClient
+    const { data } = await this.axiosClient
       .getInstance()
       .get(ApiEndpoints.allUsers.path);
-
-    return (response.data as []).map((obj) => UserModel.fromJson(obj));
+    return (data.data.users as []).map((obj) => UserModel.fromJson(obj));
   }
 
   async create(payload: CreateUserDTO): Promise<DashBoardModel> {

@@ -37,5 +37,5 @@ export const useUsersComponentViewModelDI = (): UsersComponentViewModel => {
       updateUserRoleUseCase,
       deleteUserUseCase
     );
-  }, [dispatch, store]);
+  }, [dispatch, store.getState]);
 };

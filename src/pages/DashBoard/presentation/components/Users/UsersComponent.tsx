@@ -1,4 +1,3 @@
-import type { RootState } from "@/app/store/store";
 import CustomCheckbox from "@/commons/components/checkbox/CustomCheckbox";
 import FilterBar from "@/commons/components/FilterBar/FilterBar";
 import IconButton from "@/commons/components/IconButton/IconButton";
@@ -6,144 +5,22 @@ import { StatCard } from "@/commons/components/StatCard/StatCard";
 import type { UserEntity } from "@/commons/domain/entities/UserEntity";
 import { Edit, Eye, Trash2 } from "lucide-react";
 import React from "react";
-import { useDispatch, useSelector } from "react-redux";
 import { DASHBOARD_STATS } from "../../utils/dashboardConstant";
 import UserDeleteModal from "./Modals/UserDelete";
 import UserEditModal from "./Modals/UserEdit";
 import UserViewModal from "./Modals/UserViewDetails";
 import { useUsersComponentViewModelDI } from "./UsersComponent.di";
-import {
-  setRoleFilter,
-  setSearchTerm,
-  setSelectedUser,
-  setSelectedUsers,
-  setShowDeleteModal,
-  setShowEditModal,
-  setShowViewModal,
-  setStatusFilter,
-} from "./UsersComponent.slice";
 
 const UsersComponent: React.FC = () => {
-  const dispatch = useDispatch();
-  const { users } = useSelector((state: RootState) => state.dashBoardPageSlice);
-  const {
-    searchTerm,
-    statusFilter,
-    roleFilter,
-    selectedUsers,
-    showViewModal,
-    showEditModal,
-    showDeleteModal,
-    selectedUser,
-  } = useSelector((state: RootState) => state.usersComponentSlice);
-
   const userViewModel = useUsersComponentViewModelDI();
 
-  const filteredUsers = users.filter((user) => {
-    const matchesSearch = user.name
-      .toLowerCase()
-      .includes(searchTerm.toLowerCase());
-    const matchesStatus =
-      statusFilter === "all" || user.status === statusFilter;
-    const matchesRole = roleFilter === "all" || user.roleId === roleFilter;
-    return matchesSearch && matchesStatus && matchesRole;
-  });
-
-  const handleStatusChange = async (
-    userId: string,
-    newStatus: UserEntity["status"]
-  ) => {
-    const user = users.find((u) => u.id === userId);
-    if (!user) return;
-    await userViewModel.updateUserStatus(userId, {
-      ...user,
-      status: newStatus,
-    });
-  };
-
-  const handleRoleChange = async (
-    userId: string,
-    newRole: UserEntity["role"]
-  ) => {
-    const user = users.find((u) => u.id === userId);
-    if (!user) return;
-    await userViewModel.updateUserRole(userId, { ...user, role: newRole });
-  };
-
-  const handleViewUser = (user: UserEntity) => {
-    dispatch(setSelectedUser(user));
-    dispatch(setShowViewModal(true));
-  };
-
-  const handleEditUser = (user: UserEntity) => {
-    dispatch(setSelectedUser(user));
-    dispatch(setShowEditModal(true));
-  };
-
-  const handleDeleteUser = (user: UserEntity) => {
-    dispatch(setSelectedUser(user));
-    dispatch(setShowDeleteModal(true));
-  };
-
-  const handleSaveUser = (user: UserEntity) => {
-    userViewModel.updateUser(user.id, user);
-    dispatch(setShowEditModal(false));
-    dispatch(setSelectedUser(null));
-  };
-
-  const confirmDeleteUser = async (id: string) => {
-    await userViewModel.deleteUser(id);
-    dispatch(setShowDeleteModal(false));
-    dispatch(setSelectedUser(null));
-  };
-
-  const handleBulkAction = async (action: string) => {
-    if (selectedUsers.length === 0) return;
-
-    switch (action) {
-      case "activate":
-        for (const id of selectedUsers) {
-          const user = users.find((u) => u.id === id);
-          if (user) {
-            await userViewModel.updateUserStatus(id, {
-              ...user,
-              status: "active",
-            });
-          }
-        }
-        break;
-      case "inactivate":
-        for (const id of selectedUsers) {
-          const user = users.find((u) => u.id === id);
-          if (user) {
-            await userViewModel.updateUserStatus(id, {
-              ...user,
-              status: "inactive",
-            });
-          }
-        }
-        break;
-      case "delete":
-        for (const id of selectedUsers) {
-          await userViewModel.deleteUser(id);
-        }
-        break;
-    }
-
-    dispatch(setSelectedUsers([]));
-  };
-
-  const handleSelectAll = (checked: boolean) => {
-    dispatch(setSelectedUsers(checked ? filteredUsers.map((u) => u.id) : []));
-  };
-
-  const handleSelectUser = (userId: string, checked: boolean) => {
-    if (checked) {
-      dispatch(setSelectedUsers([...selectedUsers, userId]));
-    } else {
-      dispatch(setSelectedUsers(selectedUsers.filter((id) => id !== userId)));
-    }
-  };
+  const filteredUsers = userViewModel.getFilteredUsers();
+  const { searchTerm, statusFilter, roleFilter } =
+    userViewModel.getFilterStates();
+  const { showViewModal, showEditModal, showDeleteModal, selectedUser } =
+    userViewModel.getModalStates();
+  const selectedUsersCount = userViewModel.getSelectedUsersCount();
+  const isAllSelected = userViewModel.isAllUsersSelected();
 
   return (
     <div className="p-6 bg-white rounded-lg shadow-sm">
@@ -154,13 +31,13 @@ const UsersComponent: React.FC = () => {
       <FilterBar
         search={{
           value: searchTerm,
-          onChange: (val) => dispatch(setSearchTerm(val)),
+          onChange: (val) => userViewModel.setSearchFilter(val),
           placeholder: "Search users...",
         }}
         filters={[
           {
             value: statusFilter,
-            onChange: (val) => dispatch(setStatusFilter(val)),
+            onChange: (val) => userViewModel.setStatusFilterValue(val),
             options: [
               { value: "all", label: "All Status" },
               { value: "active", label: "Active" },
@@ -170,7 +47,7 @@ const UsersComponent: React.FC = () => {
           },
           {
             value: roleFilter,
-            onChange: (val) => dispatch(setRoleFilter(val)),
+            onChange: (val) => userViewModel.setRoleFilterValue(val),
             options: [
               { value: "all", label: "All Roles" },
               { value: "user", label: "User" },
@@ -182,25 +59,25 @@ const UsersComponent: React.FC = () => {
         className="mb-6"
       />
 
-      {selectedUsers.length > 0 && (
+      {selectedUsersCount > 0 && (
         <div className="flex items-center gap-4 mb-4 p-3 bg-blue-50 rounded-lg">
           <span className="text-sm text-blue-700">
-            {selectedUsers.length} user(s) selected
+            {selectedUsersCount} user(s) selected
           </span>
           <button
-            onClick={() => handleBulkAction("activate")}
+            onClick={() => userViewModel.handleBulkAction("activate")}
             className="text-sm bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700"
           >
             Activate
           </button>
           <button
-            onClick={() => handleBulkAction("inactivate")}
+            onClick={() => userViewModel.handleBulkAction("inactivate")}
             className="text-sm bg-gray-600 text-white px-3 py-1 rounded hover:bg-gray-700"
           >
             Inactivate
           </button>
           <button
-            onClick={() => handleBulkAction("delete")}
+            onClick={() => userViewModel.handleBulkAction("delete")}
             className="text-sm bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700"
           >
             Delete
@@ -214,11 +91,10 @@ const UsersComponent: React.FC = () => {
             <tr className="border-b border-gray-200">
               <th className="text-left p-4">
                 <CustomCheckbox
-                  checked={
-                    selectedUsers.length === filteredUsers.length &&
-                    filteredUsers.length > 0
+                  checked={isAllSelected}
+                  onChange={(e) =>
+                    userViewModel.handleSelectAll(e.target.checked)
                   }
-                  onChange={(e) => handleSelectAll(e.target.checked)}
                 />
               </th>
               <th className="text-left p-4 font-semibold text-gray-900">
@@ -246,9 +122,9 @@ const UsersComponent: React.FC = () => {
               >
                 <td className="p-4">
                   <CustomCheckbox
-                    checked={selectedUsers.includes(user.id)}
+                    checked={userViewModel.isUserSelected(user.id)}
                     onChange={(e) =>
-                      handleSelectUser(user.id, e.target.checked)
+                      userViewModel.handleSelectUser(user.id, e.target.checked)
                     }
                   />
                 </td>
@@ -272,7 +148,7 @@ const UsersComponent: React.FC = () => {
                   <select
                     value={user.status}
                     onChange={(e) =>
-                      handleStatusChange(
+                      userViewModel.handleStatusChange(
                         user.id,
                         e.target.value as UserEntity["status"]
                       )
@@ -287,7 +163,7 @@ const UsersComponent: React.FC = () => {
                   <select
                     value={user.role}
                     onChange={(e) =>
-                      handleRoleChange(
+                      userViewModel.handleRoleChange(
                         user.id,
                         e.target.value as UserEntity["role"]
                       )
@@ -303,19 +179,19 @@ const UsersComponent: React.FC = () => {
                     <IconButton
                       icon={Edit}
                       title="Edit User"
-                      onClick={() => handleEditUser(user)}
+                      onClick={() => userViewModel.handleEditUser(user)}
                       className="text-blue-600 hover:bg-blue-100"
                     />
                     <IconButton
                       icon={Eye}
                       title="View Details"
-                      onClick={() => handleViewUser(user)}
+                      onClick={() => userViewModel.handleViewUser(user)}
                       className="text-green-600 hover:bg-green-100"
                     />
                     <IconButton
                       icon={Trash2}
                       title="Delete User"
-                      onClick={() => handleDeleteUser(user)}
+                      onClick={() => userViewModel.handleDeleteUser(user)}
                       className="text-red-600 hover:bg-red-100"
                     />
                   </div>
@@ -326,7 +202,7 @@ const UsersComponent: React.FC = () => {
         </table>
       </div>
 
-      {filteredUsers.length === 0 && (
+      {userViewModel.hasNoFilteredUsers() && (
         <div className="text-center py-8 text-gray-500">
           No users found matching your criteria.
         </div>
@@ -340,30 +216,21 @@ const UsersComponent: React.FC = () => {
 
       <UserViewModal
         isOpen={showViewModal}
-        onClose={() => {
-          dispatch(setShowViewModal(false));
-          dispatch(setSelectedUser(null));
-        }}
+        onClose={() => userViewModel.closeAllModals()}
         user={selectedUser}
       />
 
       <UserEditModal
         isOpen={showEditModal}
-        onClose={() => {
-          dispatch(setShowEditModal(false));
-          dispatch(setSelectedUser(null));
-        }}
-        onSave={handleSaveUser}
+        onClose={() => userViewModel.closeAllModals()}
+        onSave={(user) => userViewModel.handleSaveUser(user)}
         user={selectedUser}
       />
 
       <UserDeleteModal
         isOpen={showDeleteModal}
-        onClose={() => {
-          dispatch(setShowDeleteModal(false));
-          dispatch(setSelectedUser(null));
-        }}
-        onConfirm={confirmDeleteUser}
+        onClose={() => userViewModel.closeAllModals()}
+        onConfirm={(id) => userViewModel.confirmDeleteUser(id)}
         isLoading={false}
         user={selectedUser}
       />

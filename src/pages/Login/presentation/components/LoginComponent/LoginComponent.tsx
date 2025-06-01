@@ -20,7 +20,7 @@ const LoginComponent = () => {
   const [error, setError] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
   const { isLoading } = useSelector(
-    (state: RootState) => state.LoginPageReducer
+    (state: RootState) => state.LoginPageReducerSlice
   );
 
   const redirectPath = searchParams.get("redirect") || "/dashboard";

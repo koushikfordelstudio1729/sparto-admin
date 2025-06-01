@@ -5,5 +5,5 @@ export interface AddressEntity {
   state: string;
   pincode: string;
   country: string;
-  isDefault: boolean;
+  is_default: boolean;
 }

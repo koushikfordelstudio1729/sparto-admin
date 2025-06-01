@@ -7,14 +7,14 @@ const UserDeleteModal: React.FC<UserDeleteModalProps> = ({
   isOpen,
   onClose,
   onConfirm,
-  userName,
+  user,
   isLoading = false,
 }) => {
   if (!isOpen) return null;
 
-  const handleConfirm = () => {
+  const handleConfirm = (id: string) => {
     if (!isLoading) {
-      onConfirm();
+      onConfirm(id);
     }
   };
 
@@ -31,8 +31,8 @@ const UserDeleteModal: React.FC<UserDeleteModalProps> = ({
         <div className="mb-6">
           <p className="text-gray-600">
             Are you sure you want to delete this user
-            {userName ? ` "${userName}"` : ""}? This action cannot be undone and
-            will permanently remove all associated data.
+            {user?.name ? ` "${user.name}"` : ""}? This action cannot be undone
+            and will permanently remove all associated data.
           </p>
         </div>
 
@@ -47,7 +47,11 @@ const UserDeleteModal: React.FC<UserDeleteModalProps> = ({
             <p className="text-white"> Cancel</p>
           </CustomButton>
           <CustomButton
-            onClick={handleConfirm}
+            onClick={() => {
+              if (user?.id) {
+                handleConfirm(user.id);
+              }
+            }}
             variant="danger"
             size="md"
             disabled={false}

@@ -1,31 +1,50 @@
 import type { AppDispatch } from "@/app/store/store";
-import {
-  setSubmitting,
-  setNameInput,
-  setActiveSample,
-} from "./UsersComponent.slice";
+import { UpdateUaserStatusUseCase } from "@/pages/DashBoard/domain/usecases/UpdateUserStatusUseCase";
+import type { UserEntity } from "@/commons/domain/entities/UserEntity";
+import type { UpdateUaserRoleUseCase } from "@/pages/DashBoard/domain/usecases/UpdateUserRoleUseCase";
+import { setLoading } from "./UsersComponent.slice";
+import type { DeleteUserUseCase } from "@/pages/DashBoard/domain/usecases/DeleteUserUseCase";
 
 export class UsersComponentViewModel {
   private readonly dispatch: AppDispatch;
+  private readonly updateUserStatusUseCase: UpdateUaserStatusUseCase;
+  private readonly updateUserRoleUseCase: UpdateUaserRoleUseCase;
+  private readonly deleteUserUseCase: DeleteUserUseCase;
 
-  constructor(dispatch: AppDispatch) {
+  constructor(
+    dispatch: AppDispatch,
+    updateUserStatusUseCase: UpdateUaserStatusUseCase,
+    updateUserRoleUseCase: UpdateUaserRoleUseCase,
+    deleteUserUseCase: DeleteUserUseCase
+  ) {
     this.dispatch = dispatch;
+    this.updateUserStatusUseCase = updateUserStatusUseCase;
+    this.updateUserRoleUseCase = updateUserRoleUseCase;
+    this.deleteUserUseCase = deleteUserUseCase;
   }
 
-  updateNameInput(value: string): void {
-    this.dispatch(setNameInput(value));
-  }
-
-  setActiveSample(sample: null): void {
-    this.dispatch(setActiveSample(sample));
-  }
-
-  async submit(): Promise<void> {
+  async updateUserStatus(id: string, entity: UserEntity): Promise<void> {
     try {
-      this.dispatch(setSubmitting(true));
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      this.dispatch(setLoading(true));
+      await this.updateUserStatusUseCase.execute(id, entity);
     } finally {
-      this.dispatch(setSubmitting(false));
+      this.dispatch(setLoading(false));
+    }
+  }
+  async updateUserRole(id: string, entity: UserEntity): Promise<void> {
+    try {
+      this.dispatch(setLoading(true));
+      await this.updateUserRoleUseCase.execute(id, entity);
+    } finally {
+      this.dispatch(setLoading(false));
+    }
+  }
+  async deleteUser(id: string): Promise<void> {
+    try {
+      this.dispatch(setLoading(true));
+      await this.deleteUserUseCase.execute(id);
+    } finally {
+      this.dispatch(setLoading(false));
     }
   }
 }

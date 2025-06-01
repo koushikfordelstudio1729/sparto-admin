@@ -1,9 +1,6 @@
-import type { DashBoardEntity } from "@/pages/DashBoard/domain/entities/DashBoardEntity";
+import type { OrderEntity } from "@/commons/domain/entities/OrderEntity";
 
 export interface OrdersComponentState {
-  isSubmitting: boolean;
-
-  nameInput: string;
-
-  activeSample: DashBoardEntity | null;
+  isLoading: boolean;
+  allOrders: OrderEntity[];
 }

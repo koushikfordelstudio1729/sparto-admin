@@ -35,7 +35,7 @@ const UserEditModal: React.FC<UserEditModalProps> = ({
           {
             city: "",
             country: "",
-            isDefault: true,
+            is_default: true,
             line1: "",
             line2: "",
             pincode: "",
@@ -210,7 +210,7 @@ const UserEditModal: React.FC<UserEditModalProps> = ({
               <label className="flex items-center">
                 <input
                   type="checkbox"
-                  checked={formData.addresses?.[0]?.isDefault || false}
+                  checked={formData.addresses?.[0]?.is_default || false}
                   onChange={(e) =>
                     handleAddressChange("is_default", e.target.checked)
                   }
@@ -252,6 +252,7 @@ const UserEditModal: React.FC<UserEditModalProps> = ({
               size="md"
               fullWidth
               disabled={false}
+              onClick={handleSubmit}
             >
               <p className="text-white">Save Changes</p>
             </CustomButton>

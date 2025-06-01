@@ -11,19 +11,21 @@ import { DASHBOARD_STATS } from "../../utils/dashboardConstant";
 import UserDeleteModal from "./Modals/UserDelete";
 import UserEditModal from "./Modals/UserEdit";
 import UserViewModal from "./Modals/UserViewDetails";
+import { useDashBoardPageViewModelDI } from "../../page.di";
+import { useUsersComponentViewModelDI } from "./UsersComponent.di";
 
 const UsersComponent: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [roleFilter, setRoleFilter] = useState("all");
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
-  const { users } = useSelector((state: RootState) => state.dashBoardPage);
+  const { users } = useSelector((state: RootState) => state.dashBoardPageSlice);
   // Modal states - now tracking specific users
   const [showViewModal, setShowViewModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState<UserEntity | null>(null);
-  const [userToDelete, setUserToDelete] = useState<string>("");
+  const [, setUserToDelete] = useState<string>("");
 
   const filteredUsers = users.filter((user) => {
     const matchesSearch = user.name
@@ -34,16 +36,34 @@ const UsersComponent: React.FC = () => {
     const matchesRole = roleFilter === "all" || user.roleId === roleFilter;
     return matchesSearch && matchesStatus && matchesRole;
   });
+  const dashboardViewModel = useDashBoardPageViewModelDI();
+  const userViewModel = useUsersComponentViewModelDI();
 
-  const handleStatusChange = (
+  const handleStatusChange = async (
     userId: string,
     newStatus: UserEntity["status"]
   ) => {
-    console.log(userId, newStatus);
+    const user = users.find((u) => u.id === userId);
+    if (!user) return;
+
+    const updatedUser: UserEntity = {
+      ...user,
+      status: newStatus,
+    };
+
+    await userViewModel.updateUserStatus(userId, updatedUser);
   };
 
-  const handleRoleChange = (role: string, newStatus: UserEntity["role"]) => {
-    console.log(role, newStatus);
+  const handleRoleChange = (userId: string, newRole: UserEntity["role"]) => {
+    const user = users.find((u) => u.id === userId);
+    if (!user) return;
+
+    const updatedUser: UserEntity = {
+      ...user,
+      role: newRole,
+    };
+
+    userViewModel.updateUserRole(userId, updatedUser);
   };
 
   // Modal handlers - now properly setting selected user
@@ -66,15 +86,16 @@ const UsersComponent: React.FC = () => {
     }
   };
 
-  const handleSaveUser = (updatedUser: UserEntity) => {
-    console.log(updatedUser);
-    // Handle save logic here
+  const handleSaveUser = (user: UserEntity) => {
+    dashboardViewModel.updateUser(user.id, user);
+
     setShowEditModal(false);
     setSelectedUser(null);
   };
 
-  const confirmDeleteUser = async () => {
+  const confirmDeleteUser = async (id: string) => {
     // Handle delete logic here
+    userViewModel.deleteUser(id);
     setShowDeleteModal(false);
     setSelectedUser(null);
     setUserToDelete("");
@@ -86,7 +107,7 @@ const UsersComponent: React.FC = () => {
     switch (action) {
       case "activate":
         break;
-      case "deactivate":
+      case "inactivate":
         break;
       case "delete":
         break;
@@ -177,10 +198,10 @@ const UsersComponent: React.FC = () => {
             Activate
           </button>
           <button
-            onClick={() => handleBulkAction("deactivate")}
+            onClick={() => handleBulkAction("inactivate")}
             className="text-sm bg-gray-600 text-white px-3 py-1 rounded hover:bg-gray-700"
           >
-            Deactivate
+            inactivate
           </button>
           <button
             onClick={() => handleBulkAction("delete")}
@@ -270,7 +291,6 @@ const UsersComponent: React.FC = () => {
                   >
                     <option value="active">Active</option>
                     <option value="inactive">Inactive</option>
-                    <option value="deleted">Deleted</option>
                   </select>
                 </td>
 
@@ -279,16 +299,17 @@ const UsersComponent: React.FC = () => {
                     value={user.role}
                     onChange={(e) =>
                       handleRoleChange(
-                        user.role,
+                        user.id,
                         e.target.value as UserEntity["role"]
                       )
                     }
                     className="text-sm border-0 bg-transparent focus:ring-0"
                   >
-                    <option value="active">User</option>
-                    <option value="inactive">Admin</option>
+                    <option value="user">User</option>
+                    <option value="admin">Admin</option>
                   </select>
                 </td>
+
                 <td className="p-4">
                   <div className="flex items-center gap-2">
                     <IconButton
@@ -348,8 +369,8 @@ const UsersComponent: React.FC = () => {
         isOpen={showDeleteModal}
         onClose={handleCloseDeleteModal}
         onConfirm={confirmDeleteUser}
-        userName={userToDelete}
         isLoading={false}
+        user={selectedUser}
       />
     </div>
   );

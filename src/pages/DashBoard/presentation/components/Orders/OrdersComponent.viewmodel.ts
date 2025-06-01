@@ -1,31 +1,27 @@
 import type { AppDispatch } from "@/app/store/store";
-import {
-  setSubmitting,
-  setNameInput,
-  setActiveSample,
-} from "./OrdersComponent.slice";
+import type { GetAllOrdersUseCase } from "@/pages/DashBoard/domain/usecases/GetAllOrdersUseCase";
+import { setAllOrders, setLoading } from "./OrdersComponent.slice";
 
 export class OrdersComponentViewModel {
   private readonly dispatch: AppDispatch;
+  private readonly getAllOrdersUseCase: GetAllOrdersUseCase;
 
-  constructor(dispatch: AppDispatch) {
+  constructor(dispatch: AppDispatch, getAllOrdersUseCase: GetAllOrdersUseCase) {
     this.dispatch = dispatch;
+    this.getAllOrdersUseCase = getAllOrdersUseCase;
   }
 
-  updateNameInput(value: string): void {
-    this.dispatch(setNameInput(value));
+  async initialize(): Promise<void> {
+    await this.getAllOrders();
   }
 
-  setActiveSample(sample: null): void {
-    this.dispatch(setActiveSample(sample));
-  }
-
-  async submit(): Promise<void> {
+  async getAllOrders(): Promise<void> {
     try {
-      this.dispatch(setSubmitting(true));
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      this.dispatch(setLoading(true));
+      const orders = await this.getAllOrdersUseCase.execute();
+      this.dispatch(setAllOrders(orders));
     } finally {
-      this.dispatch(setSubmitting(false));
+      this.dispatch(setLoading(false));
     }
   }
 }

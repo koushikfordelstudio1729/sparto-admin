@@ -1,36 +1,14 @@
-export interface OrderItem {
-  id: string;
-  name: string;
-  quantity: number;
-  price: number;
-  image?: string;
-}
-
-export interface Order {
-  id: string;
-  userId: string;
-  userName: string;
-  userEmail: string;
-  items: OrderItem[];
-  status:
-    | "pending"
-    | "confirmed"
-    | "processing"
-    | "shipped"
-    | "delivered"
-    | "cancelled";
-  paymentStatus: "pending" | "paid" | "failed" | "refunded";
-  totalAmount: number;
-  shippingAddress: string;
-  orderDate: string;
-  estimatedDelivery?: string;
-  trackingNumber?: string;
-  notes?: string;
-}
+import type { OrderEntity } from "@/commons/domain/entities/OrderEntity";
 
 export interface OrderDetailsModalProps {
-  selectedOrder: Order | null;
+  selectedOrder: OrderEntity | null;
   onClose: () => void;
+}
+
+export interface OrderTableProps {
+  orders: OrderEntity[];
+  setSelectedOrder: React.Dispatch<React.SetStateAction<OrderEntity | null>>;
+  setShowDetailsModal: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export interface OrderFilterProps {
@@ -42,12 +20,6 @@ export interface OrderFilterProps {
   setPaymentFilter: React.Dispatch<React.SetStateAction<string>>;
   dateFilter: string;
   setDateFilter: React.Dispatch<React.SetStateAction<string>>;
-}
-
-export interface OrderTableProps {
-  orders: Order[];
-  setSelectedOrder: React.Dispatch<React.SetStateAction<Order | null>>;
-  setShowDetailsModal: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export interface OrderStatusBadgeProps {

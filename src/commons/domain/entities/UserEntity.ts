@@ -11,7 +11,7 @@ export interface UserEntity {
   profilePictureUrl?: string;
   roleId: string;
   role: "user" | "admin" | "superadmin";
-  status: "active" | "deleted";
+  status: "active" | "inactive";
   termsAccepted: boolean;
   createdAt: number;
   updatedAt: number;

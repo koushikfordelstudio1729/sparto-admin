@@ -10,6 +10,7 @@ import { AuthService } from "@/commons/network/AuthService";
 import { UpdateUaserRoleUseCase } from "@/pages/DashBoard/domain/usecases/UpdateUserRoleUseCase";
 import { DeleteUserUseCase } from "@/pages/DashBoard/domain/usecases/DeleteUserUseCase";
 import type { RootState } from "@/app/store/store";
+import { UpdateUaserUseCase } from "@/pages/DashBoard/domain/usecases/UpdateUserUseCase";
 
 export const useUsersComponentViewModelDI = (): UsersComponentViewModel => {
   const dispatch = useDispatch();
@@ -23,7 +24,7 @@ export const useUsersComponentViewModelDI = (): UsersComponentViewModel => {
       dataSource,
       localStorageService
     );
-
+    const updateUserUseCase = new UpdateUaserUseCase(repository);
     const updateUserStatusUseCase = new UpdateUaserStatusUseCase(repository);
     const updateUserRoleUseCase = new UpdateUaserRoleUseCase(repository);
     const deleteUserUseCase = new DeleteUserUseCase(repository);
@@ -31,6 +32,7 @@ export const useUsersComponentViewModelDI = (): UsersComponentViewModel => {
     return new UsersComponentViewModel(
       dispatch,
       store.getState,
+      updateUserUseCase,
       updateUserStatusUseCase,
       updateUserRoleUseCase,
       deleteUserUseCase

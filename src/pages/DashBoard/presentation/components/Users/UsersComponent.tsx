@@ -2,26 +2,25 @@ import type { RootState } from "@/app/store/store";
 import CustomCheckbox from "@/commons/components/checkbox/CustomCheckbox";
 import FilterBar from "@/commons/components/FilterBar/FilterBar";
 import IconButton from "@/commons/components/IconButton/IconButton";
+import { StatCard } from "@/commons/components/StatCard/StatCard";
 import type { UserEntity } from "@/commons/domain/entities/UserEntity";
 import { Edit, Eye, Trash2 } from "lucide-react";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { StatCard } from "@/commons/components/StatCard/StatCard";
 import { DASHBOARD_STATS } from "../../utils/dashboardConstant";
 import UserDeleteModal from "./Modals/UserDelete";
 import UserEditModal from "./Modals/UserEdit";
 import UserViewModal from "./Modals/UserViewDetails";
-import { useDashBoardPageViewModelDI } from "../../page.di";
 import { useUsersComponentViewModelDI } from "./UsersComponent.di";
 import {
-  setSearchTerm,
-  setStatusFilter,
   setRoleFilter,
-  setSelectedUsers,
+  setSearchTerm,
   setSelectedUser,
-  setShowViewModal,
-  setShowEditModal,
+  setSelectedUsers,
   setShowDeleteModal,
+  setShowEditModal,
+  setShowViewModal,
+  setStatusFilter,
 } from "./UsersComponent.slice";
 
 const UsersComponent: React.FC = () => {
@@ -38,7 +37,6 @@ const UsersComponent: React.FC = () => {
     selectedUser,
   } = useSelector((state: RootState) => state.usersComponentSlice);
 
-  const dashboardViewModel = useDashBoardPageViewModelDI();
   const userViewModel = useUsersComponentViewModelDI();
 
   const filteredUsers = users.filter((user) => {
@@ -88,7 +86,7 @@ const UsersComponent: React.FC = () => {
   };
 
   const handleSaveUser = (user: UserEntity) => {
-    dashboardViewModel.updateUser(user.id, user);
+    userViewModel.updateUser(user.id, user);
     dispatch(setShowEditModal(false));
     dispatch(setSelectedUser(null));
   };

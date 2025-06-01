@@ -1,23 +1,36 @@
-import type { AppDispatch } from "@/app/store/store";
+import {
+  setSelectedUser,
+  setShowEditModal,
+  setShowDeleteModal,
+  setShowViewModal,
+  setSelectedUsers,
+  setLoading,
+  setSearchTerm,
+  setRoleFilter,
+  setStatusFilter,
+} from "./UsersComponent.slice";
+import type { AppDispatch, RootState } from "@/app/store/store";
 import { UpdateUaserStatusUseCase } from "@/pages/DashBoard/domain/usecases/UpdateUserStatusUseCase";
-import type { UserEntity } from "@/commons/domain/entities/UserEntity";
+import { DeleteUserUseCase } from "@/pages/DashBoard/domain/usecases/DeleteUserUseCase";
 import type { UpdateUaserRoleUseCase } from "@/pages/DashBoard/domain/usecases/UpdateUserRoleUseCase";
-import { setLoading } from "./UsersComponent.slice";
-import type { DeleteUserUseCase } from "@/pages/DashBoard/domain/usecases/DeleteUserUseCase";
+import type { UserEntity } from "@/commons/domain/entities/UserEntity";
 
 export class UsersComponentViewModel {
-  private readonly dispatch: AppDispatch;
-  private readonly updateUserStatusUseCase: UpdateUaserStatusUseCase;
-  private readonly updateUserRoleUseCase: UpdateUaserRoleUseCase;
-  private readonly deleteUserUseCase: DeleteUserUseCase;
+  private dispatch: AppDispatch;
+  private getState: () => RootState;
+  private updateUserStatusUseCase: UpdateUaserStatusUseCase;
+  private updateUserRoleUseCase: UpdateUaserRoleUseCase;
+  private deleteUserUseCase: DeleteUserUseCase;
 
   constructor(
     dispatch: AppDispatch,
+    getState: () => RootState,
     updateUserStatusUseCase: UpdateUaserStatusUseCase,
     updateUserRoleUseCase: UpdateUaserRoleUseCase,
     deleteUserUseCase: DeleteUserUseCase
   ) {
     this.dispatch = dispatch;
+    this.getState = getState;
     this.updateUserStatusUseCase = updateUserStatusUseCase;
     this.updateUserRoleUseCase = updateUserRoleUseCase;
     this.deleteUserUseCase = deleteUserUseCase;
@@ -31,6 +44,7 @@ export class UsersComponentViewModel {
       this.dispatch(setLoading(false));
     }
   }
+
   async updateUserRole(id: string, entity: UserEntity): Promise<void> {
     try {
       this.dispatch(setLoading(true));
@@ -39,6 +53,7 @@ export class UsersComponentViewModel {
       this.dispatch(setLoading(false));
     }
   }
+
   async deleteUser(id: string): Promise<void> {
     try {
       this.dispatch(setLoading(true));
@@ -46,5 +61,47 @@ export class UsersComponentViewModel {
     } finally {
       this.dispatch(setLoading(false));
     }
+  }
+
+  openEditModal(user: UserEntity): void {
+    this.dispatch(setSelectedUser(user));
+    this.dispatch(setShowEditModal(true));
+  }
+
+  openViewModal(user: UserEntity): void {
+    this.dispatch(setSelectedUser(user));
+    this.dispatch(setShowViewModal(true));
+  }
+
+  openDeleteModal(user: UserEntity): void {
+    this.dispatch(setSelectedUser(user));
+    this.dispatch(setShowDeleteModal(true));
+  }
+
+  closeAllModals(): void {
+    this.dispatch(setShowEditModal(false));
+    this.dispatch(setShowDeleteModal(false));
+    this.dispatch(setShowViewModal(false));
+    this.dispatch(setSelectedUser(null));
+  }
+
+  setSearchFilter(term: string): void {
+    this.dispatch(setSearchTerm(term));
+  }
+
+  setRoleFilterValue(role: string): void {
+    this.dispatch(setRoleFilter(role));
+  }
+
+  setStatusFilterValue(status: string): void {
+    this.dispatch(setStatusFilter(status));
+  }
+
+  selectUsers(userIds: string[]): void {
+    this.dispatch(setSelectedUsers(userIds));
+  }
+
+  getSelectedUsers(): string[] {
+    return this.getState().usersComponentSlice.selectedUsers;
   }
 }

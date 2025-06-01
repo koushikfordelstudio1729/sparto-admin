@@ -1,10 +1,10 @@
-import { Edit, Eye } from "lucide-react";
-import React from "react";
-import type { OrderTableProps } from "../Orders.types";
+import IconButton from "@/commons/components/IconButton/IconButton";
 import StatusBadge from "@/commons/components/StatusBadge/StatusBadge";
 import { getOrderStatusClass } from "@/commons/utils/getOrderStatusClass";
 import { getPaymentStatusClass } from "@/commons/utils/getPaymentsStatusClass";
-import IconButton from "@/commons/components/IconButton/IconButton";
+import { Eye } from "lucide-react";
+import React from "react";
+import type { OrderTableProps } from "../Orders.types";
 
 const OrderTable: React.FC<OrderTableProps> = ({
   orders,
@@ -42,22 +42,13 @@ const OrderTable: React.FC<OrderTableProps> = ({
               key={order.id}
               className="border-b border-gray-100 hover:bg-gray-50"
             >
+              <td className="p-4 font-medium text-gray-900">{order.id}</td>
               <td className="p-4">
-                <div className="font-medium text-gray-900">{order.id}</div>
+                <div className="font-medium text-gray-900">{order.userId}</div>
               </td>
-              <td className="p-4">
-                <div className="font-medium text-gray-900">
-                  {order.userName}
-                </div>
-                <div className="text-sm text-gray-500">{order.userEmail}</div>
-              </td>
-              <td className="p-4">
-                <div className="text-sm">{order.items.length} item(s)</div>
-              </td>
-              <td className="p-4">
-                <div className="font-medium text-gray-900">
-                  ${order.totalAmount.toFixed(2)}
-                </div>
+              <td className="p-4 text-sm">{order.items.length} item(s)</td>
+              <td className="p-4 font-medium text-gray-900">
+                ${parseFloat(order.totalAmount).toFixed(2)}
               </td>
               <td className="p-4">
                 <StatusBadge
@@ -70,17 +61,16 @@ const OrderTable: React.FC<OrderTableProps> = ({
               <td className="p-4">
                 <StatusBadge
                   text={
-                    order.paymentStatus.charAt(0).toUpperCase() +
-                    order.paymentStatus.slice(1)
+                    order.status.charAt(0).toUpperCase() + order.status.slice(1)
                   }
-                  className={getPaymentStatusClass(order.paymentStatus)}
+                  className={getPaymentStatusClass(order.status)}
                 />
               </td>
-              <td className="p-4">
-                <div className="text-sm text-gray-900">{order.orderDate}</div>
+              <td className="p-4 text-sm text-gray-900">
+                {new Date(order.createdAt).toLocaleDateString()}
               </td>
               <td className="p-4">
-                <div className="flex items-center gap-2">
+                <div className="flex items-center justify-center">
                   <IconButton
                     icon={Eye}
                     title="View Details"
@@ -89,12 +79,6 @@ const OrderTable: React.FC<OrderTableProps> = ({
                       setShowDetailsModal(true);
                     }}
                     className="text-blue-600 hover:bg-blue-100"
-                  />
-                  <IconButton
-                    icon={Edit}
-                    title="Edit Order"
-                    onClick={() => {}}
-                    className="text-green-600 hover:bg-green-100"
                   />
                 </div>
               </td>

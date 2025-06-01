@@ -9,7 +9,7 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
   if (!selectedOrder) return null;
 
   const orderStatus = selectedOrder.status ?? "pending";
-  const paymentStatus = selectedOrder.paymentStatus ?? "pending";
+  const paymentStatus = selectedOrder.status ?? "pending";
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 backdrop-blur-sm">
@@ -34,12 +34,12 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
               <div className="space-y-2 text-sm">
                 <p>
                   <span className="font-medium">Name:</span>{" "}
-                  {selectedOrder.userName}
+                  {selectedOrder.userId}
                 </p>
-                <p>
+                {/* <p>
                   <span className="font-medium">Email:</span>{" "}
-                  {selectedOrder.userEmail}
-                </p>
+                  {selectedOrder.userEmail || "N/A"}
+                </p> */}
                 <p>
                   <span className="font-medium">User ID:</span>{" "}
                   {selectedOrder.userId}
@@ -51,7 +51,7 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
               <div className="space-y-2 text-sm">
                 <p>
                   <span className="font-medium">Order Date:</span>{" "}
-                  {selectedOrder.orderDate}
+                  {selectedOrder.createdAt}
                 </p>
                 <p>
                   <span className="font-medium">Status:</span>{" "}
@@ -71,10 +71,10 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
                     paymentStatus as "pending" | "paid" | "failed" | "refunded"
                   )}
                 </p>
-                {selectedOrder.trackingNumber && (
+                {selectedOrder.shipment?.trackingNumber && (
                   <p>
                     <span className="font-medium">Tracking:</span>{" "}
-                    {selectedOrder.trackingNumber}
+                    {selectedOrder.shipment?.trackingNumber}
                   </p>
                 )}
               </div>

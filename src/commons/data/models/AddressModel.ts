@@ -49,11 +49,12 @@ export class AddressModel {
   toEntity(): AddressEntity {
     return {
       line1: this.line1,
+      line2: this.line1,
       city: this.city,
       state: this.state,
       pincode: this.pincode,
       country: this.country,
-      isDefault: this.is_default,
+      is_default: this.is_default,
     };
   }
 }

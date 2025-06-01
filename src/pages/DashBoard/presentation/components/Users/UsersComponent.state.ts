@@ -1,9 +1,13 @@
-import type { DashBoardEntity } from "@/pages/DashBoard/domain/entities/DashBoardEntity";
+import type { UserEntity } from "@/commons/domain/entities/UserEntity";
 
 export interface UsersComponentState {
-  isSubmitting: boolean;
-
-  nameInput: string;
-
-  activeSample: DashBoardEntity | null;
+  isLoading: boolean;
+  searchTerm: string;
+  statusFilter: string;
+  roleFilter: string;
+  selectedUsers: string[];
+  selectedUser: UserEntity | null;
+  showViewModal: boolean;
+  showEditModal: boolean;
+  showDeleteModal: boolean;
 }

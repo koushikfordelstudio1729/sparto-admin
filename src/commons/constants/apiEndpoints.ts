@@ -8,4 +8,12 @@ export const ApiEndpoints: Record<string, ApiEndpoint> = {
     path: "users/login",
     requiresAuth: false,
   },
+  allUsers: {
+    path: "users",
+    requiresAuth: true,
+  },
+  orders: {
+    path: "orders",
+    requiresAuth: true,
+  },
 };

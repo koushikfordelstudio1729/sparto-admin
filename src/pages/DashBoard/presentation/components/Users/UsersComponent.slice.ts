@@ -1,32 +1,63 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
-import type { DashBoardEntity } from "@/pages/DashBoard/domain/entities/DashBoardEntity";
 import type { UsersComponentState } from "./UsersComponent.state";
+import type { UserEntity } from "@/commons/domain/entities/UserEntity";
 
 const initialState: UsersComponentState = {
-  isSubmitting: false,
-  nameInput: "",
-  activeSample: null,
+  isLoading: false,
+  searchTerm: "",
+  statusFilter: "all",
+  roleFilter: "all",
+  selectedUsers: [],
+  selectedUser: null,
+  showViewModal: false,
+  showEditModal: false,
+  showDeleteModal: false,
 };
 
 const usersComponentSlice = createSlice({
   name: "UsersComponent",
   initialState,
   reducers: {
-    setSubmitting(state, action: PayloadAction<boolean>) {
-      state.isSubmitting = action.payload;
+    setLoading(state, action: PayloadAction<boolean>) {
+      state.isLoading = action.payload;
     },
-
-    setNameInput(state, action: PayloadAction<string>) {
-      state.nameInput = action.payload;
+    setSearchTerm(state, action: PayloadAction<string>) {
+      state.searchTerm = action.payload;
     },
-
-    setActiveSample(state, action: PayloadAction<DashBoardEntity | null>) {
-      state.activeSample = action.payload;
+    setStatusFilter(state, action: PayloadAction<string>) {
+      state.statusFilter = action.payload;
+    },
+    setRoleFilter(state, action: PayloadAction<string>) {
+      state.roleFilter = action.payload;
+    },
+    setSelectedUsers(state, action: PayloadAction<string[]>) {
+      state.selectedUsers = action.payload;
+    },
+    setSelectedUser(state, action: PayloadAction<UserEntity | null>) {
+      state.selectedUser = action.payload;
+    },
+    setShowViewModal(state, action: PayloadAction<boolean>) {
+      state.showViewModal = action.payload;
+    },
+    setShowEditModal(state, action: PayloadAction<boolean>) {
+      state.showEditModal = action.payload;
+    },
+    setShowDeleteModal(state, action: PayloadAction<boolean>) {
+      state.showDeleteModal = action.payload;
     },
   },
 });
 
-export const { setSubmitting, setNameInput, setActiveSample } =
-  usersComponentSlice.actions;
+export const {
+  setLoading,
+  setSearchTerm,
+  setStatusFilter,
+  setRoleFilter,
+  setSelectedUsers,
+  setSelectedUser,
+  setShowViewModal,
+  setShowEditModal,
+  setShowDeleteModal,
+} = usersComponentSlice.actions;
 
 export const usersComponentReducer = usersComponentSlice.reducer;

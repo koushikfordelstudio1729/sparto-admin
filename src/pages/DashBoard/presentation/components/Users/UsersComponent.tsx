@@ -4,16 +4,21 @@ import IconButton from "@/commons/components/IconButton/IconButton";
 import { StatCard } from "@/commons/components/StatCard/StatCard";
 import type { UserEntity } from "@/commons/domain/entities/UserEntity";
 import { Edit, Eye, Trash2 } from "lucide-react";
-import React from "react";
+import React, { useEffect } from "react";
 import { DASHBOARD_STATS } from "../../utils/dashboardConstant";
 import UserDeleteModal from "./Modals/UserDelete";
 import UserEditModal from "./Modals/UserEdit";
 import UserViewModal from "./Modals/UserViewDetails";
 import { useUsersComponentViewModelDI } from "./UsersComponent.di";
+import { useDashBoardPageViewModelDI } from "../../page.di";
 
 const UsersComponent: React.FC = () => {
   const userViewModel = useUsersComponentViewModelDI();
+  const viewModel = useDashBoardPageViewModelDI();
 
+  useEffect(() => {
+    viewModel.initialize();
+  }, [viewModel]);
   const filteredUsers = userViewModel.getFilteredUsers();
   const { searchTerm, statusFilter, roleFilter } =
     userViewModel.getFilterStates();

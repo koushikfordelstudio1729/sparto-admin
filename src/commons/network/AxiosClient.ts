@@ -113,8 +113,8 @@ export class AxiosClient {
   }
 
   private async redirectToLogin(): Promise<void> {
-    this.authService.clearAll();
     if (this.onUnauthorizedRedirect) {
+      this.authService.clearAll();
       await this.onUnauthorizedRedirect();
     }
   }

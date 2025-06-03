@@ -1,6 +1,6 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
-import type { UsersComponentState } from "./UsersComponent.state";
 import type { UserEntity } from "@/commons/domain/entities/UserEntity";
+import type { UsersComponentState } from "./UsersComponent.state";
 
 const initialState: UsersComponentState = {
   isLoading: false,
@@ -8,10 +8,11 @@ const initialState: UsersComponentState = {
   statusFilter: "all",
   roleFilter: "all",
   selectedUsers: [],
-  selectedUser: null,
   showViewModal: false,
   showEditModal: false,
   showDeleteModal: false,
+  selectedUser: null,
+  userToDelete: "",
 };
 
 const usersComponentSlice = createSlice({
@@ -33,8 +34,15 @@ const usersComponentSlice = createSlice({
     setSelectedUsers(state, action: PayloadAction<string[]>) {
       state.selectedUsers = action.payload;
     },
-    setSelectedUser(state, action: PayloadAction<UserEntity | null>) {
-      state.selectedUser = action.payload;
+    addSelectedUser(state, action: PayloadAction<string>) {
+      if (!state.selectedUsers.includes(action.payload)) {
+        state.selectedUsers.push(action.payload);
+      }
+    },
+    removeSelectedUser(state, action: PayloadAction<string>) {
+      state.selectedUsers = state.selectedUsers.filter(
+        (id) => id !== action.payload
+      );
     },
     setShowViewModal(state, action: PayloadAction<boolean>) {
       state.showViewModal = action.payload;
@@ -45,6 +53,22 @@ const usersComponentSlice = createSlice({
     setShowDeleteModal(state, action: PayloadAction<boolean>) {
       state.showDeleteModal = action.payload;
     },
+    setSelectedUser(state, action: PayloadAction<UserEntity | null>) {
+      state.selectedUser = action.payload;
+    },
+    setUserToDelete(state, action: PayloadAction<string>) {
+      state.userToDelete = action.payload;
+    },
+    resetModals(state) {
+      state.showViewModal = false;
+      state.showEditModal = false;
+      state.showDeleteModal = false;
+      state.selectedUser = null;
+      state.userToDelete = "";
+    },
+    clearSelectedUsers(state) {
+      state.selectedUsers = [];
+    },
   },
 });
 
@@ -54,10 +78,15 @@ export const {
   setStatusFilter,
   setRoleFilter,
   setSelectedUsers,
-  setSelectedUser,
+  addSelectedUser,
+  removeSelectedUser,
   setShowViewModal,
   setShowEditModal,
   setShowDeleteModal,
+  setSelectedUser,
+  setUserToDelete,
+  resetModals,
+  clearSelectedUsers,
 } = usersComponentSlice.actions;
 
 export const usersComponentReducer = usersComponentSlice.reducer;

@@ -6,8 +6,9 @@ export interface UsersComponentState {
   statusFilter: string;
   roleFilter: string;
   selectedUsers: string[];
-  selectedUser: UserEntity | null;
   showViewModal: boolean;
   showEditModal: boolean;
   showDeleteModal: boolean;
+  selectedUser: UserEntity | null;
+  userToDelete: string;
 }

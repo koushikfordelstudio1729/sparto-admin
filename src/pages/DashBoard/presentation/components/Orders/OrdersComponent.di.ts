@@ -4,7 +4,7 @@ import { OrdersComponentViewModel } from "./OrdersComponent.viewmodel";
 import { AuthService } from "@/commons/network/AuthService";
 import { AxiosClient } from "@/commons/network/AxiosClient";
 import { DashBoardApiDatasource } from "@/pages/DashBoard/data/datasource/DashBoardApiDatasource";
-import { StorageService } from "@/commons/storage/StorageService";
+// import { StorageService } from "@/commons/storage/StorageService";
 import { DashBoardRepositoryImpl } from "./../../../data/repositoryImpl/DashBoardRepositoryImpl";
 import { GetAllOrdersUseCase } from "@/pages/DashBoard/domain/usecases/GetAllOrdersUseCase";
 
@@ -17,10 +17,10 @@ export const useOrdersComponentViewModelDI = (): OrdersComponentViewModel => {
     const axiosClient = new AxiosClient(authService);
 
     const dataSource = new DashBoardApiDatasource(axiosClient);
-    const localStorageService = new StorageService(true);
+    // const localStorageService = new StorageService(true);
     const repository = new DashBoardRepositoryImpl(
-      dataSource,
-      localStorageService
+      dataSource
+      // localStorageService
     );
 
     const loginUserUseCase = new GetAllOrdersUseCase(repository);

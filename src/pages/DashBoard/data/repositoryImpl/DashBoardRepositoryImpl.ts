@@ -4,20 +4,20 @@ import type { DashBoardRepository } from "../../domain/repository/DashBoardRepos
 import { DashBoardApiDatasource } from "../datasource/DashBoardApiDatasource";
 import { DashBoardModelMapper } from "../mappers/DashBoardModelMapper";
 import type { OrderEntity } from "@/commons/domain/entities/OrderEntity";
-import type { StorageService } from "@/commons/storage/StorageService";
+// import type { StorageService } from "@/commons/storage/StorageService";
 import type { PaymentEntity } from "@/commons/domain/entities/PaymentEntity";
 import type { PaymentStatus } from "../dtos/UpdatePaymentStatusDTO";
 
 export class DashBoardRepositoryImpl implements DashBoardRepository {
   private readonly dataSource: DashBoardApiDatasource;
-  private readonly localStorageService: StorageService;
+  // private readonly localStorageService: StorageService;
 
   constructor(
-    dataSource: DashBoardApiDatasource,
-    localStorageService: StorageService
+    dataSource: DashBoardApiDatasource
+    // localStorageService: StorageService
   ) {
     this.dataSource = dataSource;
-    this.localStorageService = localStorageService;
+    // this.localStorageService = localStorageService;
   }
 
   async getAllUsers(): Promise<UserEntity[]> {

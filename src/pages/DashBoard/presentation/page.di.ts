@@ -16,10 +16,10 @@ export const useDashBoardPageViewModelDI = (): DashBoardPageViewModel => {
     const axiosClient = new AxiosClient(authService);
     const dataSource = new DashBoardApiDatasource(axiosClient);
 
-    const localStorageService = new StorageService(true);
+    // const localStorageService = new StorageService(true);
     const repository = new DashBoardRepositoryImpl(
-      dataSource,
-      localStorageService
+      dataSource
+      // localStorageService
     );
 
     const getAllSamplesUseCase = new GetAllUserUseCase(repository);

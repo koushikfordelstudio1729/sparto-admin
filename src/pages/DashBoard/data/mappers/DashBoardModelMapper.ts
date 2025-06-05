@@ -3,7 +3,8 @@ import type { CreateUserDTO } from "../dtos/CreateUserDTO";
 import type { UpdateUserDTO } from "../dtos/UpdateUserDTO";
 import type { UpdateUserStatusDTO } from "../dtos/UpdateUserStatusDTO";
 import type { UpdateUserRoleDTO } from "../dtos/UpdateUserRoleDTO";
-
+import type { PaymentStatus } from "../dtos/UpdatePaymentStatusDTO";
+import type { UpdatePaymentStatusDTO } from "../dtos/UpdatePaymentStatusDTO";
 export class DashBoardModelMapper {
   static toCreateDTO(entity: UserEntity): CreateUserDTO {
     return {
@@ -34,6 +35,13 @@ export class DashBoardModelMapper {
   static toUpdateUserRoleDTO(entity: UserEntity): UpdateUserRoleDTO {
     return {
       new_role: entity.role,
+    };
+  }
+  static toUpdatePaymentStatusDTO(
+    status: PaymentStatus
+  ): UpdatePaymentStatusDTO {
+    return {
+      payment_status: status,
     };
   }
 }

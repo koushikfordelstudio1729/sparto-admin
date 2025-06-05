@@ -16,6 +16,7 @@ export class UserModel {
   public created_at: number;
   public updated_at: number;
   public has_password: boolean;
+  public role: "user" | "admin" | "superadmin";
 
   constructor(
     id: string,
@@ -29,7 +30,8 @@ export class UserModel {
     terms_accepted: boolean,
     created_at: number,
     updated_at: number,
-    has_password: boolean
+    has_password: boolean,
+    role: "user" | "admin" | "superadmin"
   ) {
     this.id = id;
     this.name = name;
@@ -43,6 +45,7 @@ export class UserModel {
     this.created_at = created_at;
     this.updated_at = updated_at;
     this.has_password = has_password;
+    this.role = role;
   }
 
   toEntity(): UserEntity {
@@ -59,6 +62,7 @@ export class UserModel {
       createdAt: this.created_at,
       updatedAt: this.updated_at,
       hasPassword: this.has_password,
+      role: this.role,
     };
   }
 
@@ -85,7 +89,8 @@ export class UserModel {
       json.terms_accepted as boolean,
       json.created_at as number,
       json.updated_at as number,
-      json.has_password as boolean
+      json.has_password as boolean,
+      json.role as "user" | "admin" | "superadmin"
     );
   }
 

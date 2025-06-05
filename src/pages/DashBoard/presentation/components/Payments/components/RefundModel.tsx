@@ -38,7 +38,7 @@ export const RefundModal: React.FC<RefundModalProps> = ({
         <div className="p-6">
           <div className="mb-4">
             <p className="text-sm text-gray-600 mb-2">
-              Payment ID: {payment.id}
+              Payment ID: {payment.transactionId}
             </p>
             <p className="text-sm text-gray-600 mb-2">
               Original Amount: ${payment.amount.toFixed(2)}

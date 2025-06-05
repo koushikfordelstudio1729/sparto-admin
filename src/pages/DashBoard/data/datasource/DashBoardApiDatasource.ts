@@ -7,6 +7,8 @@ import { DashBoardModel } from "../models/DashBoardModel";
 import { OrderModel } from "@/commons/data/models/OrderModel";
 import type { UpdateUserStatusDTO } from "../dtos/UpdateUserStatusDTO";
 import type { UpdateUserRoleDTO } from "../dtos/UpdateUserRoleDTO";
+import { PaymentModel } from "@/commons/data/models/PaymentModel";
+import type { UpdatePaymentStatusDTO } from "../dtos/UpdatePaymentStatusDTO";
 
 export class DashBoardApiDatasource {
   private readonly axiosClient: AxiosClient;
@@ -67,5 +69,23 @@ export class DashBoardApiDatasource {
       .getInstance()
       .get(ApiEndpoints.orders.path);
     return (data.data.orders as []).map((obj) => OrderModel.fromJson(obj));
+  }
+
+  //fetch all the payments history
+  async getAllPayments(): Promise<PaymentModel[]> {
+    const { data } = await this.axiosClient
+      .getInstance()
+      .get(ApiEndpoints.payments.path);
+
+    return (data.data as []).map((obj) => PaymentModel.fromJson(obj));
+  }
+
+  async updatePaymentStatus(
+    id: string,
+    payload: UpdatePaymentStatusDTO
+  ): Promise<void> {
+    await this.axiosClient
+      .getInstance()
+      .put(`${ApiEndpoints.payments.path}/${id}`, payload);
   }
 }

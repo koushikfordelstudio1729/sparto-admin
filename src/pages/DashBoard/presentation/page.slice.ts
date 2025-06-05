@@ -17,9 +17,15 @@ const pageSlice = createSlice({
     setLoading(state, action: PayloadAction<boolean>) {
       state.isLoading = action.payload;
     },
+    updateUserInList(state, action: PayloadAction<UserEntity>) {
+      const index = state.users.findIndex((u) => u.id === action.payload.id);
+      if (index !== -1) {
+        state.users[index] = action.payload;
+      }
+    },
   },
 });
 
-export const { setUsers, setLoading } = pageSlice.actions;
+export const { setUsers, setLoading, updateUserInList } = pageSlice.actions;
 
 export const dashBoardPageReducer = pageSlice.reducer;

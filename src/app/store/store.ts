@@ -4,6 +4,7 @@ import { dashBoardPageReducer } from "@/pages/DashBoard/presentation/page.slice"
 import { LoginPageReducer } from "@/pages/Login/presentation/page.slice";
 import { OrdersComponentReducer } from "@/pages/DashBoard/presentation/components/Orders/OrdersComponent.slice";
 import { usersComponentReducer } from "@/pages/DashBoard/presentation/components/Users/UsersComponent.slice";
+import { PaymentsComponentReducer } from "@/pages/DashBoard/presentation/components/Payments/PaymentsComponent.slice";
 
 export const store = configureStore({
   reducer: {
@@ -12,6 +13,7 @@ export const store = configureStore({
     LoginPageReducerSlice: LoginPageReducer,
     OrdersComponentslice: OrdersComponentReducer,
     usersComponentSlice: usersComponentReducer,
+    paymentsComponentSlice: PaymentsComponentReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

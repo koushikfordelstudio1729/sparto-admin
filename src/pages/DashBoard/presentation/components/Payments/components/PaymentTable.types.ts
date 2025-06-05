@@ -1,7 +1,8 @@
-import type { Payment } from "../payments.types";
+import type { PaymentEntity } from "@/commons/domain/entities/PaymentEntity";
+import type { PaymentsComponentViewModel } from "../PaymentsComponent.viewmodel";
 
 export interface PaymentsTabProps {
-  payments: Payment[];
+  payments: PaymentEntity[];
   searchTerm: string;
   setSearchTerm: (value: string) => void;
   statusFilter: string;
@@ -10,8 +11,7 @@ export interface PaymentsTabProps {
   setMethodFilter: (value: string) => void;
   dateFilter: string;
   setDateFilter: (value: string) => void;
-  setSelectedPayment: (payment: Payment) => void;
-  setShowRefundModal: (value: boolean) => void;
+  setSelectedPayment: (payment: PaymentEntity | null) => void; // ✅ CORRECT
   setShowDetailsModal: (value: boolean) => void;
-  handleStatusChange: (paymentId: string, newStatus: Payment["status"]) => void;
+  paymentViewModel: PaymentsComponentViewModel;
 }

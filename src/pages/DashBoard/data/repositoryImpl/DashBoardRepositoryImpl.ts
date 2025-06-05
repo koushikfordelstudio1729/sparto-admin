@@ -5,6 +5,8 @@ import { DashBoardApiDatasource } from "../datasource/DashBoardApiDatasource";
 import { DashBoardModelMapper } from "../mappers/DashBoardModelMapper";
 import type { OrderEntity } from "@/commons/domain/entities/OrderEntity";
 import type { StorageService } from "@/commons/storage/StorageService";
+import type { PaymentEntity } from "@/commons/domain/entities/PaymentEntity";
+import type { PaymentStatus } from "../dtos/UpdatePaymentStatusDTO";
 
 export class DashBoardRepositoryImpl implements DashBoardRepository {
   private readonly dataSource: DashBoardApiDatasource;
@@ -54,5 +56,13 @@ export class DashBoardRepositoryImpl implements DashBoardRepository {
     const models = await this.dataSource.getAllOrders();
     const orders = models.map((model) => model.toEntity());
     return orders;
+  }
+  async getAllPayments(): Promise<PaymentEntity[]> {
+    const models = await this.dataSource.getAllPayments();
+    return models.map((model) => model.toEntity());
+  }
+  async updatePaymentStatus(id: string, status: PaymentStatus): Promise<void> {
+    const dto = DashBoardModelMapper.toUpdatePaymentStatusDTO(status);
+    await this.dataSource.updatePaymentStatus(id, dto);
   }
 }

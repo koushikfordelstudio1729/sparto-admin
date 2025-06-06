@@ -1,13 +1,14 @@
+import type { OrderEntity } from "@/commons/domain/entities/OrderEntity";
 import type { DashBoardRepository } from "../repository/DashBoardRepository";
 
-export class DeleteUserUseCase {
+export class GetAllOrdersUseCase {
   private readonly repository: DashBoardRepository;
 
   constructor(repository: DashBoardRepository) {
     this.repository = repository;
   }
 
-  async execute(id: string): Promise<void> {
-    await this.repository.deleteUser(id);
+  async execute(): Promise<OrderEntity[]> {
+    return await this.repository.getAllOrders();
   }
 }

@@ -1,9 +1,10 @@
 import React from "react";
-import type { Payment } from "../payments.types";
+// import type { Payment } from "../payments.types";
+import type { PaymentEntity } from "@/commons/domain/entities/PaymentEntity";
 import CustomButton from "@/commons/components/Button";
 
 interface PaymentDetailsModalProps {
-  payment: Payment;
+  payment: PaymentEntity;
   onClose: () => void;
 }
 
@@ -21,7 +22,7 @@ export const PaymentDetailsModal: React.FC<PaymentDetailsModalProps> = ({
         onClick={(e) => e.stopPropagation()}
       >
         <div className="p-6 border-b flex justify-between items-center">
-          <h3 className="text-xl font-bold">Payment Details - {payment.id}</h3>
+          <h3 className="text-xl font-bold">Payment Details - {payment._id}</h3>
           <button
             onClick={onClose}
             className="text-gray-500 hover:text-gray-700"
@@ -51,8 +52,18 @@ export const PaymentDetailsModal: React.FC<PaymentDetailsModalProps> = ({
               <div className="space-y-2 text-sm">
                 <p>
                   <strong>Payment Date:</strong>{" "}
-                  {new Date(payment.date).toLocaleString()}
+                  <span className="text-sm text-gray-900">
+                    {new Date(payment.date ?? 0).toLocaleString("en-US", {
+                      day: "2-digit",
+                      month: "short",
+                      year: "numeric",
+                      hour: "2-digit",
+                      minute: "2-digit",
+                      hour12: true,
+                    })}
+                  </span>
                 </p>
+
                 <p>
                   <strong>Amount:</strong> ${payment.amount.toFixed(2)}{" "}
                   {payment.currency}
@@ -63,9 +74,7 @@ export const PaymentDetailsModal: React.FC<PaymentDetailsModalProps> = ({
                 <p>
                   <strong>Gateway:</strong> {payment.gateway}
                 </p>
-                <p>
-                  <strong>Fees:</strong> ${payment.fees.toFixed(2)}
-                </p>
+                <p>{/* <strong>Fees:</strong> ${payment.fees.toFixed(2)} */}</p>
               </div>
             </div>
           </div>

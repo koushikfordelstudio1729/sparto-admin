@@ -30,7 +30,6 @@ export default tseslint.config(
     rules: {
       ...reactHooks.configs.recommended.rules,
       "no-console": "warn",
-      "dot-notation": "warn",
       "react-refresh/only-export-components": [
         "warn",
         { allowConstantExport: true },

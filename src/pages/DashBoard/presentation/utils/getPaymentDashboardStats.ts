@@ -1,12 +1,12 @@
+import type { PaymentEntity } from "@/commons/domain/entities/PaymentEntity";
 import {
-  DollarSign,
-  CreditCard,
   AlertTriangle,
+  CreditCard,
+  DollarSign,
   RefreshCcw,
 } from "lucide-react";
-import type { Payment } from "../components/Payments/payments.types";
 
-export const getPaymentDashboardStats = (payments: Payment[]) => {
+export const getPaymentDashboardStats = (payments: PaymentEntity[]) => {
   const totalRevenue = payments.reduce(
     (sum, p) => sum + (p.status === "completed" ? p.amount : 0),
     0
@@ -16,10 +16,10 @@ export const getPaymentDashboardStats = (payments: Payment[]) => {
     (p) => p.status === "completed"
   ).length;
   const pendingCount = payments.filter((p) => p.status === "pending").length;
-  const totalRefunds = payments.reduce(
-    (sum, p) => sum + (p.refundAmount || 0),
-    0
-  );
+  // const totalRefunds = payments.reduce(
+  //   (sum, p) => sum + (p.refundAmount || 0),
+  //   0
+  // );
 
   return [
     {
@@ -45,7 +45,7 @@ export const getPaymentDashboardStats = (payments: Payment[]) => {
     },
     {
       title: "Total Refunds",
-      value: `$${totalRefunds.toFixed(2)}`,
+      // value: `$${totalRefunds.toFixed(2)}`,
       variant: "red",
       icon: RefreshCcw,
       trend: { value: 0.9, isPositive: false, period: "vs last month" },

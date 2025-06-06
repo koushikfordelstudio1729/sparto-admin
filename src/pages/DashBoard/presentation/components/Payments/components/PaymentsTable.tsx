@@ -1,11 +1,10 @@
 import FilterBar from "@/commons/components/FilterBar/FilterBar";
+import type { PaymentEntity } from "@/commons/domain/entities/PaymentEntity";
 import { getTypeIcon } from "@/commons/utils/getTypeIcon";
 import { Download } from "lucide-react";
 import React from "react";
-import type { Payment } from "../payments.types";
 import type { PaymentsTabProps } from "./PaymentTable.types";
 import CustomButton from "@/commons/components/Button";
-
 export const PaymentsTab: React.FC<PaymentsTabProps> = ({
   payments,
   searchTerm,
@@ -17,26 +16,33 @@ export const PaymentsTab: React.FC<PaymentsTabProps> = ({
   dateFilter,
   setDateFilter,
   setSelectedPayment,
-  setShowRefundModal,
   setShowDetailsModal,
-  handleStatusChange,
+
+  paymentViewModel,
 }) => {
   const filteredPayments = payments.filter((payment) => {
     const matchesSearch =
-      payment.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      payment.orderId.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      payment.userName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      payment.transactionId.toLowerCase().includes(searchTerm.toLowerCase());
+      (payment._id?.toLowerCase().includes(searchTerm.toLowerCase()) ??
+        false) ||
+      (payment.orderId?.toLowerCase().includes(searchTerm.toLowerCase()) ??
+        false) ||
+      (payment.userName?.toLowerCase().includes(searchTerm.toLowerCase()) ??
+        false) ||
+      (payment.transactionId
+        ?.toLowerCase()
+        .includes(searchTerm.toLowerCase()) ??
+        false);
 
     const matchesStatus =
-      statusFilter === "all" || payment.status === statusFilter;
+      statusFilter === "all" ||
+      payment.status?.toLowerCase() === statusFilter.toLowerCase();
 
     const matchesMethod =
       methodFilter === "all" || payment.method === methodFilter;
 
     let matchesDate = true;
     if (dateFilter !== "all") {
-      const paymentDate = new Date(payment.date);
+      const paymentDate = new Date(payment.date ?? 0);
       const today = new Date();
       switch (dateFilter) {
         case "today":
@@ -77,8 +83,6 @@ export const PaymentsTab: React.FC<PaymentsTabProps> = ({
                 { value: "processing", label: "Processing" },
                 { value: "completed", label: "Completed" },
                 { value: "failed", label: "Failed" },
-                { value: "refunded", label: "Refunded" },
-                { value: "disputed", label: "Disputed" },
               ],
             },
             {
@@ -113,10 +117,10 @@ export const PaymentsTab: React.FC<PaymentsTabProps> = ({
           size="md"
           disabled={false}
         >
-          <p className="flex items-center gap-2">
-            <Download size={16} className="text-white" />
-            <p className="text-white ">Export</p>
-          </p>
+          <div className="flex items-center gap-2 text-white">
+            <Download size={16} />
+            <span>Export</span>
+          </div>
         </CustomButton>
       </div>
 
@@ -138,11 +142,11 @@ export const PaymentsTab: React.FC<PaymentsTabProps> = ({
           <tbody>
             {filteredPayments.map((payment) => (
               <tr
-                key={payment.id}
+                key={payment._id}
                 className="border-b border-gray-100 hover:bg-gray-50"
               >
                 <td className="p-4">
-                  <div className="font-medium text-gray-900">{payment.id}</div>
+                  <div className="font-medium text-gray-900">{payment._id}</div>
                   <div className="text-xs text-gray-500">
                     Order: {payment.orderId}
                   </div>
@@ -152,7 +156,7 @@ export const PaymentsTab: React.FC<PaymentsTabProps> = ({
                 </td>
                 <td className="p-4">
                   <div className="font-medium text-gray-900">
-                    {payment.userName}
+                    {payment.userName ?? "N/A"}
                   </div>
                   <div className="text-sm text-gray-500">
                     ID: {payment.userId}
@@ -160,22 +164,14 @@ export const PaymentsTab: React.FC<PaymentsTabProps> = ({
                 </td>
                 <td className="p-4">
                   <div className="font-medium text-gray-900">
-                    ${payment.amount.toFixed(2)} {payment.currency}
+                    ${payment.amount?.toFixed(2)} {payment.currency}
                   </div>
-                  <div className="text-xs text-gray-500">
-                    Fee: ${payment.fees.toFixed(2)}
-                  </div>
-                  {payment.refundAmount && (
-                    <div className="text-xs text-red-600">
-                      Refunded: ${payment.refundAmount.toFixed(2)}
-                    </div>
-                  )}
                 </td>
                 <td className="p-4">
                   <div className="flex items-center gap-2">
-                    {getTypeIcon(payment.method)}
+                    {getTypeIcon(payment.method ?? "")}
                     <span className="text-sm capitalize">
-                      {payment.method.replace("_", " ")}
+                      {(payment.method ?? "").replace("_", " ")}
                     </span>
                   </div>
                 </td>
@@ -183,9 +179,9 @@ export const PaymentsTab: React.FC<PaymentsTabProps> = ({
                   <select
                     value={payment.status}
                     onChange={(e) =>
-                      handleStatusChange(
-                        payment.id,
-                        e.target.value as Payment["status"]
+                      paymentViewModel.handleStatusChange(
+                        payment._id,
+                        e.target.value as PaymentEntity["status"]
                       )
                     }
                     className="text-sm border-0 bg-transparent focus:ring-0 p-0"
@@ -194,32 +190,30 @@ export const PaymentsTab: React.FC<PaymentsTabProps> = ({
                     <option value="processing">Processing</option>
                     <option value="completed">Completed</option>
                     <option value="failed">Failed</option>
-                    <option value="refunded">Refunded</option>
-                    <option value="disputed">Disputed</option>
                   </select>
                 </td>
-                <td className="p-4 text-sm text-gray-900">{payment.gateway}</td>
-                <td className="p-4">
-                  <div className="text-sm text-gray-900">
-                    {new Date(payment.date).toLocaleDateString()}
-                  </div>
-                  <div className="text-xs text-gray-500">
-                    {new Date(payment.date).toLocaleTimeString()}
-                  </div>
+                <td className="p-4 text-sm text-gray-900">
+                  {payment.gateway ?? "N/A"}
                 </td>
                 <td className="p-4">
+                  <div className="text-sm text-gray-900">
+                    {new Date(payment.date ?? 0).toLocaleString("en-US", {
+                      day: "2-digit",
+                      month: "short",
+                      year: "numeric",
+                    })}
+                  </div>
+                  <div className="text-xs text-gray-500">
+                    {new Date(payment.date ?? 0).toLocaleString("en-US", {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                      hour12: true,
+                    })}
+                  </div>
+                </td>
+
+                <td className="p-4">
                   <div className="flex items-center gap-2">
-                    {payment.status === "completed" && (
-                      <button
-                        onClick={() => {
-                          setSelectedPayment(payment);
-                          setShowRefundModal(true);
-                        }}
-                        className="text-xs bg-red-100 text-red-700 px-2 py-1 rounded hover:bg-red-200"
-                      >
-                        Refund
-                      </button>
-                    )}
                     <button
                       onClick={() => {
                         setSelectedPayment(payment);

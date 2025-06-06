@@ -4,6 +4,11 @@ import { AxiosClient } from "@/commons/network/AxiosClient";
 import type { CreateUserDTO } from "../dtos/CreateUserDTO";
 import type { UpdateUserDTO } from "../dtos/UpdateUserDTO";
 import { DashBoardModel } from "../models/DashBoardModel";
+import { OrderModel } from "@/commons/data/models/OrderModel";
+import type { UpdateUserStatusDTO } from "../dtos/UpdateUserStatusDTO";
+import type { UpdateUserRoleDTO } from "../dtos/UpdateUserRoleDTO";
+import { PaymentModel } from "@/commons/data/models/PaymentModel";
+import type { UpdatePaymentStatusDTO } from "../dtos/UpdatePaymentStatusDTO";
 
 export class DashBoardApiDatasource {
   private readonly axiosClient: AxiosClient;
@@ -13,14 +18,13 @@ export class DashBoardApiDatasource {
   }
 
   async getAllUsers(): Promise<UserModel[]> {
-    const response = await this.axiosClient
+    const { data } = await this.axiosClient
       .getInstance()
       .get(ApiEndpoints.allUsers.path);
-
-    return (response.data as []).map((obj) => UserModel.fromJson(obj));
+    return (data.data.users as []).map((obj) => UserModel.fromJson(obj));
   }
 
-  async create(payload: CreateUserDTO): Promise<DashBoardModel> {
+  async createUser(payload: CreateUserDTO): Promise<DashBoardModel> {
     const response = await this.axiosClient
       .getInstance()
       .post(ApiEndpoints.sample.path, payload);
@@ -28,17 +32,60 @@ export class DashBoardApiDatasource {
     return DashBoardModel.fromJson(response.data);
   }
 
-  async update(id: string, payload: UpdateUserDTO): Promise<DashBoardModel> {
-    const response = await this.axiosClient
-      .getInstance()
-      .put(`${ApiEndpoints.sample.path}/${id}`, payload);
-
-    return DashBoardModel.fromJson(response.data);
-  }
-
-  async delete(id: string): Promise<void> {
+  async updateUser(id: string, payload: UpdateUserDTO): Promise<void> {
     await this.axiosClient
       .getInstance()
-      .delete(`${ApiEndpoints.sample.path}/${id}`);
+      .put(`${ApiEndpoints.allUsers.path}/${id}`, payload);
+  }
+  async updateUserStatus(
+    id: string,
+    payload: UpdateUserStatusDTO
+  ): Promise<void> {
+    await this.axiosClient
+      .getInstance()
+      .put(`${ApiEndpoints.allUsers.path}/status/${id}`, payload);
+  }
+  async updateUserRole(id: string, payload: UpdateUserRoleDTO): Promise<void> {
+    await this.axiosClient
+      .getInstance()
+      .put(`${ApiEndpoints.allUsers.path}/${id}/role`, payload);
+  }
+
+  async deleteUser(id: string): Promise<void> {
+    await this.axiosClient
+      .getInstance()
+      .delete(`${ApiEndpoints.allUsers.path}/${id}`);
+  }
+
+  async getOrderById(id: string): Promise<OrderModel> {
+    const response = await this.axiosClient
+      .getInstance()
+      .get(`${ApiEndpoints.sample.path}/${id}`);
+    return OrderModel.fromJson(response.data);
+  }
+
+  async getAllOrders(): Promise<OrderModel[]> {
+    const { data } = await this.axiosClient
+      .getInstance()
+      .get(ApiEndpoints.orders.path);
+    return (data.data.orders as []).map((obj) => OrderModel.fromJson(obj));
+  }
+
+  //fetch all the payments history
+  async getAllPayments(): Promise<PaymentModel[]> {
+    const { data } = await this.axiosClient
+      .getInstance()
+      .get(ApiEndpoints.payments.path);
+
+    return (data.data as []).map((obj) => PaymentModel.fromJson(obj));
+  }
+
+  async updatePaymentStatus(
+    id: string,
+    payload: UpdatePaymentStatusDTO
+  ): Promise<void> {
+    await this.axiosClient
+      .getInstance()
+      .put(`${ApiEndpoints.payments.path}/${id}`, payload);
   }
 }

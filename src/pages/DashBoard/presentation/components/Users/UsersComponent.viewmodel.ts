@@ -125,10 +125,24 @@ export class UsersComponentViewModel {
   }
 
   async deleteUser(id: string): Promise<void> {
+    const { dashBoardPageSlice } = this.getState();
+    const user = dashBoardPageSlice.users.find((u) => u.id === id);
+    if (!user) return;
+
+    // 1) Optimistically mark as deleted in UI
+    const deletedUser: UserEntity = { ...user, status: "deleted" };
+    this.dispatch(updateUserInList(deletedUser));
+    this.dispatch(setLoading(true));
+
     try {
-      this.dispatch(setLoading(true));
+      // 2) Perform actual delete API call
       await this.deleteUserUseCase.execute(id);
+      // 3) Close modals and clear selection
       this.dispatch(resetModals());
+    } catch (error) {
+      console.error("Delete failed, reverting status", error);
+      // 4) Revert back on failure
+      this.dispatch(updateUserInList(user));
     } finally {
       this.dispatch(setLoading(false));
     }

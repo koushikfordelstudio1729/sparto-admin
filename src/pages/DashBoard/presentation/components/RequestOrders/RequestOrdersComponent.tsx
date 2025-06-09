@@ -1,45 +1,38 @@
-import React, { useState } from "react";
-import RequestOrdersTable from "./RequestOrdersTable";
-import type { RequestEntity } from "./requestOrders.types";
-import QuoteManagementComponent from "@/pages/DashBoard/presentation/components/Orders/components/QuoteManagementComponent";
+// src/pages/DashBoard/presentation/components/RequestOrders/RequestOrdersComponent.tsx
 
-const mockData: RequestEntity[] = [
-  {
-    id: "REQ-001",
-    user_id: "u1",
-    userName: "John Doe",
-    type: "repair",
-    description: "Engine is making a knocking sound during acceleration.",
-    vehicle_info: {
-      make: "Toyota",
-      model: "Camry",
-      year: 2020,
-      vin: "1HGCM82633A004352",
-      license_plate: "AB123CD",
-    },
-    media: [],
-    status: "Pending",
-    clarification_count: 0,
-    created_at: 1717651200,
-    updated_at: 1717651200,
-  },
-];
+import React, { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import RequestOrdersTable from "./components/RequestOrdersTable";
+import QuoteManagementComponent from "@/pages/DashBoard/presentation/components/ConversationAndQuote/ConversationAndQuoteComponent";
+
+import { useRequestOrdersComponentViewModelDI } from "./ReuestOrderComponent.di";
+
+import type { RequestEntity } from "@/commons/domain/entities/RequestEntity";
+import type { RootState } from "@/app/store/store";
 
 const RequestOrdersComponent: React.FC = () => {
+  const vm = useRequestOrdersComponentViewModelDI();
+  const { requestOrders } = useSelector(
+    (state: RootState) => state.requestOrders
+  );
+
   const [selectedRequest, setSelectedRequest] = useState<RequestEntity | null>(
     null
   );
 
-  console.log(
-    "Rendering RequestOrdersComponent. Selected Request:",
-    selectedRequest
-  );
+  // on mount, kick off the API call
+  useEffect(() => {
+    vm.initialize();
+  }, [vm]);
 
+  // Loading / error states
+
+  // Main render
   return (
     <>
       {selectedRequest ? (
         <QuoteManagementComponent
-          orderId={selectedRequest.id}
+          requestId={selectedRequest.id}
           customerName={selectedRequest.userName}
           createdAt={selectedRequest.created_at}
           totalValue={0}
@@ -51,11 +44,8 @@ const RequestOrdersComponent: React.FC = () => {
             Requested Orders
           </h2>
           <RequestOrdersTable
-            requests={mockData}
-            onManage={(req) => {
-              console.log("👁 Manage clicked:", req);
-              setSelectedRequest(req);
-            }}
+            requests={requestOrders}
+            onManage={(req) => setSelectedRequest(req)}
           />
         </div>
       )}

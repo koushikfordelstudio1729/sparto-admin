@@ -5,6 +5,8 @@ import type { UpdateUserStatusDTO } from "../dtos/UpdateUserStatusDTO";
 import type { UpdateUserRoleDTO } from "../dtos/UpdateUserRoleDTO";
 import type { PaymentStatus } from "../dtos/UpdatePaymentStatusDTO";
 import type { UpdatePaymentStatusDTO } from "../dtos/UpdatePaymentStatusDTO";
+import type { ClarificationEntity } from "@/commons/domain/entities/ClarificationEntity";
+import type { CreateClarificationRequestDTO } from "../dtos/CreateClarificationDTO";
 export class DashBoardModelMapper {
   static toCreateDTO(entity: UserEntity): CreateUserDTO {
     return {
@@ -43,5 +45,28 @@ export class DashBoardModelMapper {
     return {
       payment_status: status,
     };
+  }
+  // src/pages/DashBoard/data/mappers/ClarificationModelMapper.ts
+
+  static toCreateRequestDTO(
+    entity: ClarificationEntity
+  ): CreateClarificationRequestDTO {
+    const dto: CreateClarificationRequestDTO = {
+      request_id: entity.requestId,
+      actor_id: entity.actorId,
+      actor_type: entity.actorType,
+      message: entity.message,
+    };
+
+    if (entity.media.length > 0) {
+      dto.media = entity.media.map((m) => ({
+        file_url: m.file_url,
+        file_name: m.file_name,
+        file_type: m.file_type,
+        uploaded_at: m.uploaded_at,
+      }));
+    }
+
+    return dto;
   }
 }

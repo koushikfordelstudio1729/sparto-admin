@@ -20,4 +20,12 @@ export const ApiEndpoints: Record<string, ApiEndpoint> = {
     path: "payments", // 👈 Add this line
     requiresAuth: true,
   },
+  requestorder: {
+    path: "requests", // 👈 Add this line
+    requiresAuth: true,
+  },
+  clarifications: {
+    path: "clarifications",
+    requiresAuth: true,
+  },
 };

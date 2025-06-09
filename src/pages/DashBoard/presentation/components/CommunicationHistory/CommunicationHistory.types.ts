@@ -1,16 +1,13 @@
+export type CommunicationType = "email" | "phone" | "sms";
+export type CommunicationStatus = "read" | "sent" | "pending";
 export interface Communication {
   id: string;
-  userId: string;
-  userName: string;
-  userEmail: string;
-  type: "email" | "chat" | "phone" | "sms" | "support_ticket";
+  type: CommunicationType;
+  customer: string;
   subject?: string;
-  message: string;
-  status: "sent" | "delivered" | "read" | "replied" | "pending";
-  timestamp: string;
-  adminId?: string;
-  adminName?: string;
-  relatedOrderId?: string;
-  relatedQuoteId?: string;
-  priority: "low" | "medium" | "high" | "urgent";
+  status: CommunicationStatus;
+  date: string;
+  data: string;
+  userName?: string;
+  userEmail?: string;
 }

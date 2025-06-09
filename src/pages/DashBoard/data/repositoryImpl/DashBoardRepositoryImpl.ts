@@ -7,6 +7,8 @@ import type { OrderEntity } from "@/commons/domain/entities/OrderEntity";
 // import type { StorageService } from "@/commons/storage/StorageService";
 import type { PaymentEntity } from "@/commons/domain/entities/PaymentEntity";
 import type { PaymentStatus } from "../dtos/UpdatePaymentStatusDTO";
+import type { RequestEntity } from "@/commons/domain/entities/RequestEntity";
+import type { ClarificationEntity } from "@/commons/domain/entities/ClarificationEntity";
 
 export class DashBoardRepositoryImpl implements DashBoardRepository {
   private readonly dataSource: DashBoardApiDatasource;
@@ -64,5 +66,22 @@ export class DashBoardRepositoryImpl implements DashBoardRepository {
   async updatePaymentStatus(id: string, status: PaymentStatus): Promise<void> {
     const dto = DashBoardModelMapper.toUpdatePaymentStatusDTO(status);
     await this.dataSource.updatePaymentStatus(id, dto);
+  }
+  async getRequestedOrders(): Promise<RequestEntity[]> {
+    // 1. Call your API layer
+    const models = await this.dataSource.getRequestedOrders();
+    // 2. Map each returned model into your domain entity
+    return models.map((model) => model.toEntity());
+  }
+
+  async createClarification(entity: ClarificationEntity): Promise<void> {
+    // map your domain entity → DTO for the API
+    const dto = DashBoardModelMapper.toCreateRequestDTO(entity);
+    await this.dataSource.createClarification(dto);
+  }
+
+  async getClarifications(requestId: string): Promise<ClarificationEntity[]> {
+    const models = await this.dataSource.getClarifications(requestId);
+    return models.map((model) => model.toEntity());
   }
 }

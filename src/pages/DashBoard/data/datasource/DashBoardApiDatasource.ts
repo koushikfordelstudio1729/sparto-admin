@@ -9,7 +9,9 @@ import type { UpdateUserStatusDTO } from "../dtos/UpdateUserStatusDTO";
 import type { UpdateUserRoleDTO } from "../dtos/UpdateUserRoleDTO";
 import { PaymentModel } from "@/commons/data/models/PaymentModel";
 import type { UpdatePaymentStatusDTO } from "../dtos/UpdatePaymentStatusDTO";
-
+import { RequestModel } from "@/commons/data/models/ReuestedOrderModel";
+import type { CreateClarificationRequestDTO } from "../dtos/CreateClarificationDTO";
+import { ClarificationModel } from "@/commons/data/models/ClarificationModel";
 export class DashBoardApiDatasource {
   private readonly axiosClient: AxiosClient;
 
@@ -87,5 +89,43 @@ export class DashBoardApiDatasource {
     await this.axiosClient
       .getInstance()
       .put(`${ApiEndpoints.payments.path}/${id}`, payload);
+  }
+  async getRequestedOrders(): Promise<RequestModel[]> {
+    const { data } = await this.axiosClient
+      .getInstance()
+      .get(ApiEndpoints.requestorder.path);
+    return (data.data as []).map((obj) => RequestModel.fromJson(obj));
+  }
+
+  /** POST /clarifications */
+  async createClarification(
+    payload: CreateClarificationRequestDTO,
+    file?: File
+  ): Promise<void> {
+    const form = new FormData();
+    form.append("request_id", payload.request_id);
+    form.append("actor_id", payload.actor_id);
+    form.append("actor_type", payload.actor_type);
+    form.append("message", payload.message);
+
+    if (file) {
+      form.append("media", file, file.name); // single file key
+    }
+
+    await this.axiosClient
+      .getInstance()
+      .post(ApiEndpoints.clarifications.path, form, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+  }
+
+  async getClarifications(requestId: string): Promise<ClarificationModel[]> {
+    let { data } = await this.axiosClient
+      .getInstance()
+      .get(ApiEndpoints.clarifications.path, {
+        params: { request_id: requestId },
+      });
+    data = data.data ?? [];
+    return (data as []).map((obj) => ClarificationModel.fromJson(obj));
   }
 }

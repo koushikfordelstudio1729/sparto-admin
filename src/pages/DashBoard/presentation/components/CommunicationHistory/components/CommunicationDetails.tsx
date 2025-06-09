@@ -1,149 +1,70 @@
 import React from "react";
-import StatusBadge from "@/commons/components/StatusBadge/StatusBadge";
-import { getCommunicationPriorityClass } from "@/commons/utils/getCommunicationPriorityClass";
-import { getCommunicationStatusClass } from "@/commons/utils/getCommunicationStatusClass";
-import { getTypeIcon } from "@/commons/utils/getTypeIcon";
 import type { Communication } from "../CommunicationHistory.types";
-import CustomButton from "@/commons/components/Button";
-
 interface Props {
+  isOpen: boolean;
   communication: Communication;
   replyMessage: string;
-  onReplyChange: (value: string) => void;
+  onReplyChange: (msg: string) => void;
   onSendReply: () => void;
   onClearReply: () => void;
   onClose: () => void;
 }
 
 const CommunicationDetailsModal: React.FC<Props> = ({
+  isOpen,
   communication,
-  replyMessage,
-  onReplyChange,
-  onSendReply,
-  onClearReply,
   onClose,
 }) => {
-  if (!communication) return null;
+  if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 backdrop-blur-sm">
+    <div
+      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+      onClick={onClose}
+    >
       <div
-        className="bg-white rounded-lg max-w-3xl w-full mx-4 max-h-screen overflow-y-auto"
+        className="bg-white rounded-lg w-full max-w-md mx-4 p-6"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="p-6 border-b">
-          <div className="flex justify-between items-center">
-            <h3 className="text-xl font-bold">Communication Details</h3>
-            <button
-              onClick={onClose}
-              className="text-gray-500 hover:text-gray-700"
-            >
-              ✕
-            </button>
-          </div>
+        {/* Header */}
+        <div className="flex justify-between items-center mb-4">
+          <h3 className="text-xl font-bold">
+            {communication.subject ?? "Details"}
+          </h3>
+          <button
+            onClick={onClose}
+            className="text-gray-500 hover:text-gray-700"
+          >
+            ✕
+          </button>
         </div>
 
-        <div className="p-6">
-          <div className="bg-gray-50 p-4 rounded-lg mb-6">
-            <div className="flex items-center justify-between mb-2">
-              <div className="flex items-center gap-3">
-                {getTypeIcon(communication.type)}
-                <span className="font-medium capitalize">
-                  {communication.type.replace("_", " ")}
-                </span>
-              </div>
-              <div className="flex items-center gap-2">
-                <StatusBadge
-                  text={
-                    communication.priority.charAt(0).toUpperCase() +
-                    communication.priority.slice(1)
-                  }
-                  className={getCommunicationPriorityClass(
-                    communication.priority
-                  )}
-                />
-                <StatusBadge
-                  text={
-                    communication.status.charAt(0).toUpperCase() +
-                    communication.status.slice(1)
-                  }
-                  className={getCommunicationStatusClass(communication.status)}
-                />
-              </div>
-            </div>
-            {communication.subject && (
-              <h4 className="text-lg font-semibold mb-2">
-                {communication.subject}
-              </h4>
-            )}
-            <div className="text-sm text-gray-600">
-              <p>
-                <strong>From:</strong> {communication.userName} (
-                {communication.userEmail})
-              </p>
-              <p>
-                <strong>Time:</strong>{" "}
-                {new Date(communication.timestamp).toLocaleString()}
-              </p>
-              {communication.adminName && (
-                <p>
-                  <strong>Handled by:</strong> {communication.adminName}
-                </p>
-              )}
-              {communication.relatedOrderId && (
-                <p>
-                  <strong>Related Order:</strong> {communication.relatedOrderId}
-                </p>
-              )}
-              {communication.relatedQuoteId && (
-                <p>
-                  <strong>Related Quote:</strong> {communication.relatedQuoteId}
-                </p>
-              )}
-            </div>
+        {/* Meta */}
+        <div className="space-y-2 mb-4 text-sm text-gray-700">
+          <p>
+            <strong>Type:</strong>{" "}
+            <span className="capitalize">{communication.type}</span>
+          </p>
+          <p>
+            <strong>Customer:</strong> {communication.customer}
+          </p>
+          <p>
+            <strong>Status:</strong> {communication.status}
+          </p>
+          <p>
+            <strong>Date:</strong>{" "}
+            {new Date(communication.date).toLocaleString()}
+          </p>
+        </div>
+
+        {/* Message / Data */}
+        <div>
+          <h4 className="font-semibold mb-2">Message</h4>
+          <div className="p-4 bg-gray-50 rounded">
+            <p className="text-gray-800 whitespace-pre-wrap">
+              {communication.data}
+            </p>
           </div>
-
-          <div className="mb-6">
-            <h4 className="font-semibold mb-3">Message</h4>
-            <div className="bg-white border rounded-lg p-4">
-              <p className="text-gray-700 whitespace-pre-wrap">
-                {communication.message}
-              </p>
-            </div>
-          </div>
-
-          {communication.status === "pending" && (
-            <div className="mb-6">
-              <h4 className="font-semibold mb-3">Quick Reply</h4>
-              <textarea
-                value={replyMessage}
-                onChange={(e) => onReplyChange(e.target.value)}
-                rows={4}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                placeholder="Type your reply..."
-              />
-
-              <div className="flex gap-3">
-                <CustomButton
-                  onClick={onClearReply}
-                  variant="danger"
-                  size="md"
-                  disabled={false}
-                >
-                  <p className="text-white"> Clear</p>
-                </CustomButton>
-                <CustomButton
-                  onClick={onSendReply}
-                  variant="secondary"
-                  size="md"
-                  fullWidth
-                  disabled={false}
-                >
-                  <p className="text-white">Send Reply</p>
-                </CustomButton>
-              </div>
-            </div>
-          )}
         </div>
       </div>
     </div>

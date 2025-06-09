@@ -1,200 +1,174 @@
+// src/pages/DashBoard/presentation/components/CommunicationHistory/CommunicationHistory.tsx
+
+import React, { useEffect, useState } from "react";
 import FilterBar from "@/commons/components/FilterBar/FilterBar";
 import { StatCard } from "@/commons/components/StatCard/StatCard";
 import { Send } from "lucide-react";
-import React, { useEffect, useState } from "react";
-import { DASHBOARD_STATS } from "../../utils/dashboardConstant";
-import type { Communication } from "./CommunicationHistory.types";
-import CommunicationDetailsModal from "./components/CommunicationDetails";
-import MessagesTab from "./components/MessagesTable";
-import SendReplyModal from "./components/SendMessage";
+import type {
+  Communication,
+  CommunicationStatus,
+  CommunicationType,
+} from "./CommunicationHistory.types";
 import { mockCommunications } from "./testData";
+import MessagesTable from "./components/MessagesTable";
+import CommunicationDetailsModal from "./components/CommunicationDetails";
+import SendReplyModal from "./components/SendMessage";
 import CustomButton from "@/commons/components/Button";
+import { DASHBOARD_STATS } from "../../utils/dashboardConstant";
 
 const CommunicationHistory: React.FC = () => {
+  // --- State ---
   const [communications, setCommunications] = useState<Communication[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const [typeFilter, setTypeFilter] = useState("all");
-  const [statusFilter, setStatusFilter] = useState("all");
-  const [priorityFilter, setPriorityFilter] = useState("all");
-  const [selectedCommunication, setSelectedCommunication] =
-    useState<Communication | null>(null);
-  const [showDetailsModal, setShowDetailsModal] = useState(false);
-  const [showComposeModal, setShowComposeModal] = useState(false);
-  const [activeTab, setActiveTab] = useState<"messages" | "threads">(
-    "messages"
+  const [typeFilter, setTypeFilter] = useState<"all" | Communication["type"]>(
+    "all"
   );
-  const [replyMessage, setReplyMessage] = useState("");
+  const [statusFilter, setStatusFilter] = useState<
+    "all" | Communication["status"]
+  >("all");
 
+  const [selectedComm, setSelectedComm] = useState<Communication | null>(null);
+  const [showDetails, setShowDetails] = useState(false);
+  const [showReply, setShowReply] = useState(false);
+  const [replyText, setReplyText] = useState("");
+
+  // --- Load mock on mount ---
   useEffect(() => {
     setCommunications(mockCommunications);
   }, []);
 
-  const filteredCommunications = communications.filter((comm) => {
-    const matchesSearch =
-      comm.userName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      comm.userEmail.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (comm.subject &&
-        comm.subject.toLowerCase().includes(searchTerm.toLowerCase())) ||
-      comm.message.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesType = typeFilter === "all" || comm.type === typeFilter;
-    const matchesStatus =
-      statusFilter === "all" || comm.status === statusFilter;
-    const matchesPriority =
-      priorityFilter === "all" || comm.priority === priorityFilter;
+  // --- Filtering logic ---
+  const filtered = communications.filter((c) => {
+    const matchSearch =
+      c.customer.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (c.subject?.toLowerCase() ?? "").includes(searchTerm.toLowerCase()) ||
+      c.data.toLowerCase().includes(searchTerm.toLowerCase());
 
-    return matchesSearch && matchesType && matchesStatus && matchesPriority;
+    const matchType = typeFilter === "all" || c.type === typeFilter;
+    const matchStatus = statusFilter === "all" || c.status === statusFilter;
+    return matchSearch && matchType && matchStatus;
   });
 
-  const handleReply = (communicationId: string) => {
-    if (!replyMessage.trim()) return;
+  // --- Handlers ---
+  const openDetails = (comm: Communication) => {
+    setSelectedComm(comm);
+    setShowDetails(true);
+  };
 
-    const originalComm = communications.find((c) => c.id === communicationId);
-    if (!originalComm) return;
+  const openReply = (comm: Communication) => {
+    setSelectedComm(comm);
+    setShowReply(true);
+  };
+
+  const handleSendReply = () => {
+    if (!selectedComm || !replyText.trim()) return;
+
     const newReply: Communication = {
-      id: `COM-${Date.now()}`,
-      userId: originalComm.userId,
-      userName: originalComm.userName,
-      userEmail: originalComm.userEmail,
-      type: originalComm.type,
-      subject: originalComm.subject ? `Re: ${originalComm.subject}` : undefined,
-      message: replyMessage,
-      status: "sent",
-      timestamp: new Date().toISOString(),
-      adminId: "ADM-001",
-      adminName: "Current Admin",
-      priority: originalComm.priority,
-      relatedOrderId: originalComm.relatedOrderId,
-      relatedQuoteId: originalComm.relatedQuoteId,
+      ...selectedComm,
+      id: `COM-${Date.now()}`, // new unique ID
+      date: new Date().toISOString(), // now
+      data: replyText, // the reply text
+      status: "sent", // mark as sent
+      subject: selectedComm.subject ? `Re: ${selectedComm.subject}` : undefined,
     };
 
-    setCommunications((prevCommunications) => [
-      newReply,
-      ...prevCommunications,
-    ]);
-
-    setReplyMessage("");
-    setShowDetailsModal(false);
-    setShowComposeModal(false);
+    // prepend to list
+    setCommunications([newReply, ...communications]);
+    setReplyText("");
+    setShowReply(false);
   };
 
   return (
-    <div className="p-6 bg-white rounded-lg shadow-sm">
-      <div className="flex justify-between items-center mb-6">
+    <div className="p-6 bg-white rounded-lg shadow-sm space-y-6">
+      {/* Header */}
+      <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold text-gray-900">
           Communication History
         </h2>
-
         <CustomButton
-          onClick={() => setShowComposeModal(true)}
+          onClick={() => setShowReply(true)}
           variant="secondary"
           size="md"
-          disabled={false}
         >
           <div className="flex items-center gap-2">
-            {" "}
-            <Send size={20} className="mr-2" />
-            <p className="text-white">Compose Message</p>
+            <Send size={20} /> Compose Message
           </div>
         </CustomButton>
       </div>
 
-      {/* Tabs */}
-      <div className="flex border-b border-gray-200 mb-6">
-        <button
-          onClick={() => setActiveTab("messages")}
-          className={`px-4 py-2 font-medium text-sm border-b-2 ${
-            activeTab === "messages"
-              ? "border-blue-500 text-blue-600"
-              : "border-transparent text-gray-500 hover:text-gray-700"
-          }`}
-        >
-          All Messages
-        </button>
-      </div>
-
-      {/* Filters and Search */}
+      {/* Filters */}
       <FilterBar
         search={{
           value: searchTerm,
           onChange: setSearchTerm,
-          placeholder: "Search communications...",
+          placeholder: "Search communications…",
         }}
         filters={[
           {
             value: typeFilter,
-            onChange: setTypeFilter,
+            onChange: (v: string) =>
+              setTypeFilter(v as CommunicationType | "all"),
             options: [
               { value: "all", label: "All Types" },
               { value: "email", label: "Email" },
-              { value: "chat", label: "Chat" },
               { value: "phone", label: "Phone" },
               { value: "sms", label: "SMS" },
-              { value: "support_ticket", label: "Support Ticket" },
             ],
           },
           {
             value: statusFilter,
-            onChange: setStatusFilter,
+            onChange: (v: string) =>
+              setStatusFilter(v as CommunicationStatus | "all"),
             options: [
-              { value: "all", label: "All Status" },
+              { value: "all", label: "All Statuses" },
               { value: "sent", label: "Sent" },
               { value: "delivered", label: "Delivered" },
               { value: "read", label: "Read" },
-              { value: "replied", label: "Replied" },
               { value: "pending", label: "Pending" },
             ],
           },
-          {
-            value: priorityFilter,
-            onChange: setPriorityFilter,
-            options: [
-              { value: "all", label: "All Priority" },
-              { value: "low", label: "Low" },
-              { value: "medium", label: "Medium" },
-              { value: "high", label: "High" },
-              { value: "urgent", label: "Urgent" },
-            ],
-          },
         ]}
-        className="mb-6"
+        className="mb-4"
       />
 
-      <MessagesTab
-        communications={filteredCommunications}
-        onViewDetails={(comm) => {
-          setSelectedCommunication(comm);
-          setShowDetailsModal(true);
-        }}
-        onReply={(comm) => {
-          setSelectedCommunication(comm);
-          setShowComposeModal(true);
-        }}
+      {/* Table */}
+      <MessagesTable
+        communications={filtered}
+        onViewDetails={openDetails}
+        onReply={openReply}
       />
 
-      <div className="mt-6 grid grid-cols-1 md:grid-cols-4 gap-4">
+      {/* Dashboard Stats */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mt-6">
         {DASHBOARD_STATS.map((stat) => (
           <StatCard key={stat.title} {...stat} />
         ))}
       </div>
 
-      {showComposeModal && selectedCommunication && (
-        <SendReplyModal
-          communication={selectedCommunication}
-          replyMessage={replyMessage}
-          onReplyChange={setReplyMessage}
-          onSendReply={() => handleReply(selectedCommunication.id)}
-          onClose={() => setShowComposeModal(false)}
+      {/* Details Modal */}
+      {selectedComm && (
+        <CommunicationDetailsModal
+          isOpen={showDetails}
+          communication={selectedComm}
+          replyMessage={replyText}
+          onReplyChange={setReplyText}
+          onSendReply={handleSendReply}
+          onClearReply={() => setReplyText("")}
+          onClose={() => setShowDetails(false)}
         />
       )}
 
-      {showDetailsModal && selectedCommunication && (
-        <CommunicationDetailsModal
-          communication={selectedCommunication}
-          replyMessage={replyMessage}
-          onReplyChange={setReplyMessage}
-          onSendReply={() => handleReply(selectedCommunication.id)}
-          onClearReply={() => setReplyMessage("")}
-          onClose={() => setShowDetailsModal(false)}
+      {/* Quick Reply Modal */}
+      {showReply && selectedComm && (
+        <SendReplyModal
+          communication={selectedComm}
+          replyMessage={replyText}
+          onReplyChange={setReplyText}
+          onSendReply={handleSendReply}
+          onClose={() => {
+            setShowReply(false);
+            setReplyText("");
+          }}
         />
       )}
     </div>

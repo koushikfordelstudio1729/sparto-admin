@@ -4,6 +4,7 @@ export const AppRoutes = {
   DASHBOARD: "/dashboard",
   DASHBOARD_ALL_USERS: "/dashboard/users",
   DASHBOARD_ORDERS: "/dashboard/orders",
+  DASHBOARD_REQUESTED_ORDERS: "/dashboard/requested-orders",
   DASHBOARD_COMMUNICATION_HISTORY: "/dashboard/communication-history",
   DASHBOARD_PAYMENTS: "/dashboard/payments",
   DASHBOARD_PROFILE: "/dashboard/profile",

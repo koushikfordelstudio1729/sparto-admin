@@ -12,7 +12,7 @@ import ProfileComponent from "@/pages/DashBoard/presentation/components/Profile/
 import PageNotFound from "@/pages/PageNotFound/presentation/view/PageNotFound";
 import PaymentComponent from "@/pages/DashBoard/presentation/components/Payments/PaymentsComponent";
 import CommunicationHistory from "@/pages/DashBoard/presentation/components/CommunicationHistory/CommunicationHistoryComponent";
-
+import RequestOrdersComponent from "@/pages/DashBoard/presentation/components/RequestOrders/RequestOrdersComponent";
 const AppRouter = () => {
   return (
     <BrowserRouter>
@@ -53,6 +53,10 @@ const AppRouter = () => {
               <Route
                 path={AppRoutes.DASHBOARD_SETTINGS}
                 element={<SettingsComponent />}
+              />
+              <Route
+                path={AppRoutes.DASHBOARD_REQUESTED_ORDERS}
+                element={<RequestOrdersComponent />}
               />
               <Route
                 path={AppRoutes.DASHBOARD_PROFILE}

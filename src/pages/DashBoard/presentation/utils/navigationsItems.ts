@@ -6,6 +6,7 @@ import {
   ShoppingCart,
   User,
   Users,
+  ClipboardList,
 } from "lucide-react";
 
 export const navigationItems = [
@@ -20,6 +21,12 @@ export const navigationItems = [
     label: "Orders",
     icon: ShoppingCart,
     route: AppRoutes.DASHBOARD_ORDERS,
+  },
+  {
+    id: "requested-orders",
+    label: "Requested Orders",
+    icon: ClipboardList,
+    route: AppRoutes.DASHBOARD_REQUESTED_ORDERS,
   },
   {
     id: "users",

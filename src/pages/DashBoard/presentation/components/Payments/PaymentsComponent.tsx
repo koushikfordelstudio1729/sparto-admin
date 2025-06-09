@@ -2,7 +2,7 @@ import { StatCard } from "@/commons/components/StatCard/StatCard";
 import React, { useEffect, useState } from "react";
 import { getPaymentDashboardStats } from "../../utils/getPaymentDashboardStats";
 import { PaymentDetailsModal } from "./components/paymentsDetailsModel";
-import { PaymentsTab } from "./components/PaymentsTable";
+import PaymentsTable from "./components/PaymentsTable";
 import type { PaymentEntity } from "@/commons/domain/entities/PaymentEntity";
 import { useSelector } from "react-redux";
 import type { RootState } from "@/app/store/store";
@@ -48,7 +48,7 @@ const PaymentComponent: React.FC = () => {
         </button>
       </div>
 
-      <PaymentsTab
+      <PaymentsTable
         payments={payments}
         searchTerm={searchTerm}
         setSearchTerm={setSearchTerm}

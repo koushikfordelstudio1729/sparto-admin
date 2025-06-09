@@ -134,20 +134,22 @@ import type { RootState } from "@/app/store/store";
 // import type { OrderEntity } from "@/commons/domain/entities/OrderEntity";
 import FilterBar from "@/commons/components/FilterBar/FilterBar";
 import OrderTable from "./components/OrderTable";
-import RequestOrdersTable from "../RequestOrders/RequestOrdersTable";
-import type { RequestEntity } from "../RequestOrders/requestOrders.types";
-import QuoteManagementComponent from "@/pages/DashBoard/presentation/components/Orders/components/QuoteManagementComponent";
+import RequestOrdersTable from "../RequestOrders/components/RequestOrdersTable";
+import type { RequestEntity } from "@/commons/domain/entities/RequestEntity";
+import QuoteManagementComponent from "@/pages/DashBoard/presentation/components/ConversationAndQuote/ConversationAndQuoteComponent";
 import { useOrdersComponentViewModelDI } from "./OrdersComponent.di";
+import type { OrderEntity } from "@/commons/domain/entities/OrderEntity";
 
 const OrdersComponent: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [paymentFilter, setPaymentFilter] = useState("all");
   const [dateFilter, setDateFilter] = useState("all");
-  // const [selectedOrder, setSelectedOrder] = useState<OrderEntity | null>(null);
+  const [selectedOrder, setSelectedOrder] = useState<OrderEntity | null>(null);
   const [selectedRequest, setSelectedRequest] = useState<RequestEntity | null>(
     null
   );
+  console.log(selectedOrder);
   const [activeTab, setActiveTab] = useState<"ordered" | "requested">(
     "ordered"
   );
@@ -300,7 +302,7 @@ const OrdersComponent: React.FC = () => {
   if (selectedRequest) {
     return (
       <QuoteManagementComponent
-        orderId={selectedRequest.id}
+        requestId={selectedRequest.id}
         customerName={selectedRequest.userName}
         createdAt={selectedRequest.created_at}
         totalValue={0}

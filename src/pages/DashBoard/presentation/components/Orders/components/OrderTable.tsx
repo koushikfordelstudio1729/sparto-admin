@@ -1,16 +1,22 @@
 import IconButton from "@/commons/components/IconButton/IconButton";
-import StatusBadge from "@/commons/components/StatusBadge/StatusBadge";
-import { getOrderStatusClass } from "@/commons/utils/getOrderStatusClass";
-import { getPaymentStatusClass } from "@/commons/utils/getPaymentsStatusClass";
+
 import { Eye } from "lucide-react";
-import React from "react";
+import React, { useState } from "react";
 import type { OrderTableProps } from "../Orders.types";
+import type { OrderEntity } from "@/commons/domain/entities/OrderEntity";
+import ConfirmModal from "@/commons/components/ConfirmModal/ConfirmModal";
 
 const OrderTable: React.FC<OrderTableProps> = ({
   orders,
-  setSelectedOrder,
   setShowDetailsModal,
+  OrderViewModel,
+  setSelectedOrder,
 }) => {
+  const [pendingChange, setPendingChange] = useState<{
+    id: string;
+    newStatus: OrderEntity["status"];
+  } | null>(null);
+
   return (
     <div className="overflow-x-auto">
       <table className="w-full border-collapse">
@@ -27,9 +33,7 @@ const OrderTable: React.FC<OrderTableProps> = ({
             <th className="text-left p-4 font-semibold text-gray-900">
               Status
             </th>
-            <th className="text-left p-4 font-semibold text-gray-900">
-              Payment
-            </th>
+
             <th className="text-left p-4 font-semibold text-gray-900">Date</th>
             <th className="text-left p-4 font-semibold text-gray-900">
               Actions
@@ -51,24 +55,33 @@ const OrderTable: React.FC<OrderTableProps> = ({
                 ${parseFloat(order.totalAmount).toFixed(2)}
               </td>
               <td className="p-4">
-                <StatusBadge
-                  text={
-                    order.status.charAt(0).toUpperCase() + order.status.slice(1)
-                  }
-                  className={getOrderStatusClass(order.status)}
-                />
+                <td className="p-4">
+                  <select
+                    value={order.status}
+                    onChange={(e) => {
+                      const newStatus = e.target.value as OrderEntity["status"]; // 👈 cast it
+                      OrderViewModel.updateOrderStatus(order.id, newStatus);
+                      setPendingChange({ id: order.id, newStatus });
+                    }}
+                    className="border border-gray-300 rounded px-2 py-1 text-sm text-gray-900 bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  >
+                    <option value="pending">Pending</option>
+                    <option value="processing">Processing</option>
+                    <option value="shipped">Shipped</option>
+                    <option value="delivered">Delivered</option>
+                    <option value="cancelled">Cancelled</option>
+                  </select>
+                </td>
               </td>
-              <td className="p-4">
-                <StatusBadge
-                  text={
-                    order.status.charAt(0).toUpperCase() + order.status.slice(1)
-                  }
-                  className={getPaymentStatusClass(order.status)}
-                />
-              </td>
+
               <td className="p-4 text-sm text-gray-900">
-                {new Date(order.createdAt).toLocaleDateString()}
+                {new Date(order.createdAt).toLocaleDateString("en-US", {
+                  year: "numeric",
+                  month: "short", // e.g., "Jun"
+                  day: "2-digit",
+                })}
               </td>
+
               <td className="p-4">
                 <div className="flex items-center justify-center">
                   <IconButton
@@ -86,6 +99,19 @@ const OrderTable: React.FC<OrderTableProps> = ({
           ))}
         </tbody>
       </table>
+      {pendingChange && (
+        <ConfirmModal
+          message={`Change status to "${pendingChange.newStatus}"?`}
+          onCancel={() => setPendingChange(null)}
+          onConfirm={() => {
+            OrderViewModel.updateOrderStatus(
+              pendingChange.id,
+              pendingChange.newStatus
+            );
+            setPendingChange(null);
+          }}
+        />
+      )}
     </div>
   );
 };

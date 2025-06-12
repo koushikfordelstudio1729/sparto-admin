@@ -21,6 +21,7 @@ import {
   resetModals,
   clearSelectedUsers,
 } from "./UsersComponent.slice";
+import { UpdateUserUseCase } from "@/pages/DashBoard/domain/usecases/UpdateUserUseCase";
 
 export class UsersComponentViewModel {
   private readonly dispatch: AppDispatch;
@@ -28,19 +29,21 @@ export class UsersComponentViewModel {
   private readonly updateUserStatusUseCase: UpdateUaserStatusUseCase;
   private readonly updateUserRoleUseCase: UpdateUaserRoleUseCase;
   private readonly deleteUserUseCase: DeleteUserUseCase;
-
+  private readonly updateUserUseCase: UpdateUserUseCase;
   constructor(
     dispatch: AppDispatch,
     getState: () => RootState,
     updateUserStatusUseCase: UpdateUaserStatusUseCase,
     updateUserRoleUseCase: UpdateUaserRoleUseCase,
-    deleteUserUseCase: DeleteUserUseCase
+    deleteUserUseCase: DeleteUserUseCase,
+    updateUserUseCase: UpdateUserUseCase
   ) {
     this.dispatch = dispatch;
     this.getState = getState;
     this.updateUserStatusUseCase = updateUserStatusUseCase;
     this.updateUserRoleUseCase = updateUserRoleUseCase;
     this.deleteUserUseCase = deleteUserUseCase;
+    this.updateUserUseCase = updateUserUseCase;
   }
 
   setSearchTerm(term: string): void {
@@ -96,10 +99,10 @@ export class UsersComponentViewModel {
     this.dispatch(setSelectedUser(null));
   }
 
-  handleCloseEditModal(): void {
+  handleCloseEditModal = (): void => {
     this.dispatch(setShowEditModal(false));
     this.dispatch(setSelectedUser(null));
-  }
+  };
 
   handleCloseDeleteModal(): void {
     this.dispatch(resetModals());
@@ -209,5 +212,29 @@ export class UsersComponentViewModel {
       const matchesRole = roleFilter === "all" || user.roleId === roleFilter;
       return matchesSearch && matchesStatus && matchesRole;
     });
+  }
+
+  async updateUser(
+    id: string,
+    updatedFields: Partial<UserEntity>
+  ): Promise<void> {
+    console.log("updatedFields", updatedFields);
+    const current = this.getState().dashBoardPageSlice.users.find(
+      (u) => u.id === id
+    );
+    if (!current) return;
+
+    const updatedUser: UserEntity = { ...current, ...updatedFields };
+    this.dispatch(updateUserInList(updatedUser));
+    this.dispatch(setLoading(true));
+    try {
+      await this.updateUserUseCase.execute(id, updatedUser);
+    } catch (err) {
+      console.error("Update user failed, reverting", err);
+      // 5️⃣ Revert on failure
+      this.dispatch(updateUserInList(current));
+    } finally {
+      this.dispatch(setLoading(false));
+    }
   }
 }

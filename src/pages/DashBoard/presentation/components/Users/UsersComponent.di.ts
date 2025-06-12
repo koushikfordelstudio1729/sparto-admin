@@ -10,11 +10,12 @@ import { AuthService } from "@/commons/network/AuthService";
 import { UpdateUaserRoleUseCase } from "@/pages/DashBoard/domain/usecases/UpdateUserRoleUseCase";
 import { DeleteUserUseCase } from "@/pages/DashBoard/domain/usecases/DeleteUserUseCase";
 import type { RootState } from "@/app/store/store";
+import { UpdateUserUseCase } from "@/pages/DashBoard/domain/usecases/UpdateUserUseCase";
 
 export const useUsersComponentViewModelDI = (): UsersComponentViewModel => {
   const dispatch = useDispatch();
   const store = useStore<RootState>();
-
+  const getState = store.getState;
   return useMemo(() => {
     const authService = new AuthService();
     const axiosClient = new AxiosClient(authService);
@@ -27,13 +28,14 @@ export const useUsersComponentViewModelDI = (): UsersComponentViewModel => {
     const updateUserStatusUseCase = new UpdateUaserStatusUseCase(repository);
     const updateUserRoleUseCase = new UpdateUaserRoleUseCase(repository);
     const deleteUserUseCase = new DeleteUserUseCase(repository);
-
+    const updateUserUseCase = new UpdateUserUseCase(repository);
     return new UsersComponentViewModel(
       dispatch,
-      () => store.getState(),
+      getState,
       updateUserStatusUseCase,
       updateUserRoleUseCase,
-      deleteUserUseCase
+      deleteUserUseCase,
+      updateUserUseCase
     );
-  }, [dispatch, store]);
+  }, [dispatch, getState]);
 };

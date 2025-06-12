@@ -1,4 +1,5 @@
 import type { OrderEntity } from "@/commons/domain/entities/OrderEntity";
+import type { OrdersComponentViewModel } from "./OrdersComponent.viewmodel";
 
 export interface OrderDetailsModalProps {
   selectedOrder: OrderEntity | null;
@@ -7,10 +8,10 @@ export interface OrderDetailsModalProps {
 
 export interface OrderTableProps {
   orders: OrderEntity[];
-  setSelectedOrder: React.Dispatch<React.SetStateAction<OrderEntity | null>>;
+  OrderViewModel: OrdersComponentViewModel;
   setShowDetailsModal: React.Dispatch<React.SetStateAction<boolean>>;
+  setSelectedOrder: React.Dispatch<React.SetStateAction<OrderEntity | null>>;
 }
-
 export interface OrderFilterProps {
   searchTerm: string;
   setSearchTerm: React.Dispatch<React.SetStateAction<string>>;

@@ -1,7 +1,7 @@
 import type { UserEntity } from "@/commons/domain/entities/UserEntity";
 import type { DashBoardRepository } from "../repository/DashBoardRepository";
 
-export class UpdateUaserUseCase {
+export class UpdateUserUseCase {
   private readonly repository: DashBoardRepository;
 
   constructor(repository: DashBoardRepository) {

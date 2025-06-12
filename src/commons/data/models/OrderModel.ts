@@ -9,7 +9,12 @@ export class OrderModel {
   public quoteId: string;
   public items: OrderItemModel[];
   public totalAmount: string;
-  public status: string;
+  public status:
+    | "pending"
+    | "processing"
+    | "shipped"
+    | "delivered"
+    | "cancelled";
   public notes: string;
   public shipment?: ShipmentModel;
   public paymentId: string;
@@ -36,7 +41,7 @@ export class OrderModel {
     this.quoteId = quoteId;
     this.items = items;
     this.totalAmount = totalAmount;
-    this.status = status;
+    this.status = status as OrderModel["status"];
     this.notes = notes;
     this.shipment = shipment;
     this.paymentId = paymentId;

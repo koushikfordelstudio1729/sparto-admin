@@ -7,6 +7,8 @@ import type { PaymentStatus } from "../dtos/UpdatePaymentStatusDTO";
 import type { UpdatePaymentStatusDTO } from "../dtos/UpdatePaymentStatusDTO";
 import type { ClarificationEntity } from "@/commons/domain/entities/ClarificationEntity";
 import type { CreateClarificationRequestDTO } from "../dtos/CreateClarificationDTO";
+import type { OrderEntity } from "@/commons/domain/entities/OrderEntity";
+import type { UpdateOrderStatusDTO } from "../dtos/UpdateOrderStatusDTO";
 export class DashBoardModelMapper {
   static toCreateDTO(entity: UserEntity): CreateUserDTO {
     return {
@@ -68,5 +70,13 @@ export class DashBoardModelMapper {
     }
 
     return dto;
+  }
+
+  static toUpdateOrderStatusDTO(
+    status: OrderEntity["status"]
+  ): UpdateOrderStatusDTO {
+    return {
+      status,
+    };
   }
 }

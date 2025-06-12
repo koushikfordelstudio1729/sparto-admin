@@ -84,4 +84,12 @@ export class DashBoardRepositoryImpl implements DashBoardRepository {
     const models = await this.dataSource.getClarifications(requestId);
     return models.map((model) => model.toEntity());
   }
+
+  async updateOrderStatus(
+    orderId: string,
+    newStatus: OrderEntity["status"]
+  ): Promise<void> {
+    const dto = DashBoardModelMapper.toUpdateOrderStatusDTO(newStatus);
+    await this.dataSource.updateOrderStatus(orderId, dto);
+  }
 }

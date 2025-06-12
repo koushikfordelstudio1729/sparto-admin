@@ -10,7 +10,7 @@ export interface UserEntity {
   addresses: AddressEntity[];
   profilePictureUrl?: string;
   roleId: string;
-  role: "user" | "admin" | "superadmin";
+  role?: "user" | "admin" | "superadmin";
   status: "active" | "inactive" | "deleted";
   termsAccepted: boolean;
   createdAt: number;

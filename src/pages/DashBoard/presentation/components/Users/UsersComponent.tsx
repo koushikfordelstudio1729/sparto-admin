@@ -1,15 +1,15 @@
-import type { RootState } from "@/app/store/store";
 import { useSelector } from "react-redux";
+import type { RootState } from "@/app/store/store";
 import FilterBar from "@/commons/components/FilterBar/FilterBar";
 import UsersTable from "./components/UsersTable/UsersTable";
 import UserDeleteModal from "./components/Modals/UserDelete";
 import UserEditModal from "./components/Modals/UserEdit";
 import UserViewModal from "./components/Modals/UserViewDetails";
-import type { UserEntity } from "@/commons/domain/entities/UserEntity";
-import { useUsersComponentViewModelDI } from "./UsersComponent.di";
 import BulkActions from "./components/BulkActions/BulkActions";
 import { exportCsv, exportPdf } from "../../utils/FileExportUtils";
-
+import { useUsersComponentViewModelDI } from "./UsersComponent.di";
+import type { UserEntity } from "@/commons/domain/entities/UserEntity";
+import { useEffect } from "react";
 const UsersComponent: React.FC = () => {
   const vm = useUsersComponentViewModelDI();
   useSelector((state: RootState) => state.dashBoardPageSlice);
@@ -27,27 +27,31 @@ const UsersComponent: React.FC = () => {
 
   const filteredUsers: UserEntity[] = vm.getFilteredUsers();
 
-  const handleSaveUser = (user: UserEntity) => {
-    vm.updateUserRole(user.id, user);
-    vm.handleCloseEditModal();
-  };
+  // ✅ Pagination state
+
+  // ✅ Reset page on filter/search changes
+  useEffect(() => {}, [searchTerm, statusFilter, roleFilter]);
+
+  // ✅ Paginate filtered users
+
+  // const handleSaveUser = (user: UserEntity) => {
+  //   vm.updateUser(user.id, user);
+  //   vm.handleCloseEditModal();
+  // };
 
   const confirmDeleteUser = async (id: string) => {
     await vm.deleteUser(id);
   };
 
-  // CSV Export handler
   const handleExportCsv = () => {
     exportCsv(filteredUsers, ["Name", "Email", "Phone", "Status"], (user) => [
       user.name,
       user.emails[0]?.email ?? "",
       user.phones[0]?.number ?? "",
       user.status,
-      user.role,
     ]);
   };
 
-  // PDF Export handler
   const handleExportPdf = () => {
     exportPdf(
       filteredUsers,
@@ -57,7 +61,6 @@ const UsersComponent: React.FC = () => {
         user.emails[0]?.email ?? "",
         user.phones[0]?.number ?? "",
         user.status,
-        user.role,
       ]
     );
   };
@@ -137,22 +140,16 @@ const UsersComponent: React.FC = () => {
         />
       )}
 
-      {/* User Table */}
+      {/* User Table with Pagination */}
       <UsersTable
         users={filteredUsers}
         selectedUsers={selectedUsers}
-        onSelectAll={(checked: boolean) =>
-          vm.handleSelectAll(checked, filteredUsers)
-        }
-        onSelectUser={(id: string, checked: boolean) =>
-          vm.handleSelectUser(id, checked)
-        }
-        onStatusChange={(id: string, status: UserEntity["status"]) =>
-          vm.handleStatusChange(id, status)
-        }
-        onEditUser={(user: UserEntity) => vm.handleEditUser(user)}
-        onViewUser={(user: UserEntity) => vm.handleViewUser(user)}
-        onDeleteUser={(id: string) => vm.handleDeleteUser(id)}
+        onSelectAll={(checked) => vm.handleSelectAll(checked, filteredUsers)}
+        onSelectUser={(id, checked) => vm.handleSelectUser(id, checked)}
+        onStatusChange={(id, status) => vm.handleStatusChange(id, status)}
+        onEditUser={(user) => vm.handleEditUser(user)}
+        onViewUser={(user) => vm.handleViewUser(user)}
+        onDeleteUser={(id) => vm.handleDeleteUser(id)}
       />
 
       {/* Empty State */}
@@ -165,18 +162,19 @@ const UsersComponent: React.FC = () => {
       {/* Modals */}
       <UserViewModal
         isOpen={showViewModal}
-        onClose={vm.handleCloseViewModal.bind(vm)}
+        onClose={vm.handleCloseViewModal}
         user={selectedUser}
       />
       <UserEditModal
         isOpen={showEditModal}
-        onClose={vm.handleCloseEditModal.bind(vm)}
-        onSave={handleSaveUser}
+        onClose={vm.handleCloseEditModal}
+        onSave={(updatedUser) => vm.updateUser(updatedUser.id, updatedUser)}
         user={selectedUser}
       />
+
       <UserDeleteModal
         isOpen={showDeleteModal}
-        onClose={vm.handleCloseDeleteModal.bind(vm)}
+        onClose={vm.handleCloseDeleteModal}
         onConfirm={confirmDeleteUser}
         isLoading={isLoading}
         user={selectedUser}

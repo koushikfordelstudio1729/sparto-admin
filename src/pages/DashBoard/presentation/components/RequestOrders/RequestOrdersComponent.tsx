@@ -1,5 +1,3 @@
-// src/pages/DashBoard/presentation/components/RequestOrders/RequestOrdersComponent.tsx
-
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import RequestOrdersTable from "./components/RequestOrdersTable";
@@ -20,14 +18,10 @@ const RequestOrdersComponent: React.FC = () => {
     null
   );
 
-  // on mount, kick off the API call
   useEffect(() => {
     vm.initialize();
   }, [vm]);
 
-  // Loading / error states
-
-  // Main render
   return (
     <>
       {selectedRequest ? (

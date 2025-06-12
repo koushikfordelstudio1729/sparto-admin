@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { ArrowLeft, Calendar, User, Hash, DollarSign } from "lucide-react";
+import { ArrowLeft, Calendar, Hash, DollarSign } from "lucide-react";
 
 import ConversationHistory from "./components/ConversationHistory";
 import QuotePreparationForm from "./components/QuotePreparationForm";
@@ -10,7 +10,7 @@ import { ConversationTabs } from "./ConversationAndQuote.type";
 
 const QuoteManagementComponent: React.FC<QuoteManagementProps> = ({
   requestId,
-  customerName,
+
   createdAt,
   totalValue,
   onBack,
@@ -62,15 +62,7 @@ const QuoteManagementComponent: React.FC<QuoteManagementProps> = ({
                 <div className="font-semibold text-gray-900">{requestId}</div>
               </div>
             </div>
-            <div className="flex items-center space-x-3 p-4 bg-green-50 rounded-lg">
-              <User className="w-6 h-6 text-green-600" />
-              <div>
-                <div className="text-sm text-green-800">Customer</div>
-                <div className="font-semibold text-gray-900">
-                  {customerName}
-                </div>
-              </div>
-            </div>
+
             <div className="flex items-center space-x-3 p-4 bg-yellow-50 rounded-lg">
               <Calendar className="w-6 h-6 text-yellow-600" />
               <div>

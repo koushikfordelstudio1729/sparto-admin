@@ -1,3 +1,3 @@
 export interface UpdateUserRoleDTO {
-  new_role: string;
+  new_role?: "user" | "admin" | "superadmin";
 }

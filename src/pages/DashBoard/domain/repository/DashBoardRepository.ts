@@ -24,4 +24,8 @@ export interface DashBoardRepository {
   getRequestedOrders(): Promise<RequestEntity[]>;
   getClarifications(requestId: string): Promise<ClarificationEntity[]>;
   createClarification(entity: ClarificationEntity): Promise<void>;
+  updateOrderStatus(
+    orderId: string,
+    newStatus: OrderEntity["status"]
+  ): Promise<void>;
 }

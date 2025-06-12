@@ -8,6 +8,7 @@ interface Props {
 }
 
 const RequestOrdersTable: React.FC<Props> = ({ requests, onManage }) => {
+  console.log("....requests....", requests);
   return (
     <div className="overflow-x-auto bg-white rounded-lg shadow-lg font-sans">
       <table className="min-w-full divide-y divide-gray-200">
@@ -44,11 +45,16 @@ const RequestOrdersTable: React.FC<Props> = ({ requests, onManage }) => {
                 {req.id}
               </td>
               <td className="px-6 py-5 whitespace-nowrap text-base text-gray-700">
-                {req.userName}
+                {req.userName?.trim() ? req.userName : "N/A"}
               </td>
+
               <td className="px-6 py-5 whitespace-nowrap text-base text-gray-700">
-                {req.vehicle_info.make} {req.vehicle_info.model}
+                {req.vehicle_info?.make &&
+                req.vehicle_info?.make !== "undefined"
+                  ? `${req.vehicle_info.make} ${req.vehicle_info.model ?? ""}`
+                  : "N/A"}
               </td>
+
               <td className="px-6 py-5 whitespace-nowrap text-base text-gray-700">
                 {req.type.charAt(0).toUpperCase() + req.type.slice(1)}
               </td>

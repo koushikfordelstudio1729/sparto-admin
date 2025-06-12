@@ -17,9 +17,22 @@ const OrdersComponentSlice = createSlice({
     setLoading: (state, action: PayloadAction<boolean>) => {
       state.isLoading = action.payload;
     },
+    updateOrderInList: (state, action: PayloadAction<OrderEntity>) => {
+      const updatedOrder = action.payload;
+      const index = state.allOrders.findIndex(
+        (order) => order.id === updatedOrder.id
+      );
+      if (index !== -1) {
+        state.allOrders[index] = updatedOrder;
+      }
+    },
   },
 });
 
-export const { setAllOrders, setLoading } = OrdersComponentSlice.actions;
+export const {
+  setAllOrders,
+  setLoading,
+  updateOrderInList, // ← export it here
+} = OrdersComponentSlice.actions;
 
 export const OrdersComponentReducer = OrdersComponentSlice.reducer;

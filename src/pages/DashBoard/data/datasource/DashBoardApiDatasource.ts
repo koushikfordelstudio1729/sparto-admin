@@ -12,6 +12,7 @@ import type { UpdatePaymentStatusDTO } from "../dtos/UpdatePaymentStatusDTO";
 import { RequestModel } from "@/commons/data/models/ReuestedOrderModel";
 import type { CreateClarificationRequestDTO } from "../dtos/CreateClarificationDTO";
 import { ClarificationModel } from "@/commons/data/models/ClarificationModel";
+import type { UpdateOrderStatusDTO } from "../dtos/UpdateOrderStatusDTO";
 export class DashBoardApiDatasource {
   private readonly axiosClient: AxiosClient;
 
@@ -39,6 +40,7 @@ export class DashBoardApiDatasource {
       .getInstance()
       .put(`${ApiEndpoints.allUsers.path}/${id}`, payload);
   }
+
   async updateUserStatus(
     id: string,
     payload: UpdateUserStatusDTO
@@ -127,5 +129,13 @@ export class DashBoardApiDatasource {
       });
     data = data.data ?? [];
     return (data as []).map((obj) => ClarificationModel.fromJson(obj));
+  }
+  async updateOrderStatus(
+    orderId: string,
+    payload: UpdateOrderStatusDTO
+  ): Promise<void> {
+    await this.axiosClient
+      .getInstance()
+      .put(`${ApiEndpoints.orders.path}/${orderId}/status`, payload);
   }
 }
